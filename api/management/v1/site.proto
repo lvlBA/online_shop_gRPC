@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package online_shop.management.v1;
 
-import "github.com/lvlBA/online_shop/api/pagination.proto";
+import "pagination.proto";
 
 option go_package = "github.com/lvlBA/online_shop/management;management";
 
