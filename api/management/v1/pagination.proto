@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package online_shop;
+package online_shop.management.v1;
 
-option go_package = "github.com/lvlBA/online_shop;online_shop";
+option go_package = "github.com/lvlBA/online_shop/management;management";
 
 message Pagination {
   int64 page = 1;
