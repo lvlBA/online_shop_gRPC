@@ -3,7 +3,6 @@ package site
 import (
 	"context"
 
-	"github.com/go-ozzo/ozzo-validation/is"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -32,7 +31,7 @@ func (s ServiceImpl) CreateSite(ctx context.Context, req *api.CreateSideRequest)
 
 func validateCreateSideReq(req *api.CreateSideRequest) error {
 	return validation.Errors{
-		"name": validation.Validate(req.Name, validation.Required, is.DNSName),
+		"name": validation.Validate(req.Name, validation.Required),
 	}.Filter()
 }
 

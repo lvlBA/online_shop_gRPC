@@ -1,16 +1,16 @@
 package db
 
 import (
-	sql "github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx"
 )
 
 type ServiceImpl struct {
-	sqlClient *sql.DB
+	*sqlx.DB
 }
 
-func New(sqlClient *sql.DB) *ServiceImpl {
+func New(db *sqlx.DB) *ServiceImpl {
 	return &ServiceImpl{
-		sqlClient: sqlClient,
+		DB: db,
 	}
 }
 

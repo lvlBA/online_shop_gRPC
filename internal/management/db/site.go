@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"github.com/doug-martin/goqu"
-
 	"github.com/lvlBA/online_shop/internal/management/models"
 )
 
@@ -34,7 +34,18 @@ func (s *SiteImpl) CreateSite(ctx context.Context, params *CreateSiteParams) (*m
 }
 
 func (s *SiteImpl) GetSite(ctx context.Context, id string) (*models.Site, error) {
-	panic("unimplemented")
+	result := &models.Site{}
+
+	query, _, err := goqu.From(tableNameSite).Select("*").Where(goqu.Ex{"id": id}).ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create query: %w", err)
+	}
+
+	if err = s.svc.GetContext(ctx, result, query); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (s *SiteImpl) DeleteSite(ctx context.Context, id string) error {

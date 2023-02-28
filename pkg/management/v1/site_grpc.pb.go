@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SiteServiceClient interface {
 	// CreateSite - implements (this is a comment for public API)
 	CreateSite(ctx context.Context, in *CreateSideRequest, opts ...grpc.CallOption) (*CreateSideResponse, error)
-	GetSide(ctx context.Context, in *GetSideRequest, opts ...grpc.CallOption) (*GetSideResponse, error)
+	GetSite(ctx context.Context, in *GetSiteRequest, opts ...grpc.CallOption) (*GetSiteResponse, error)
 	DeleteSite(ctx context.Context, in *DeleteSiteRequest, opts ...grpc.CallOption) (*DeleteSiteResponse, error)
 	ListSites(ctx context.Context, in *ListSitesRequest, opts ...grpc.CallOption) (*ListSitesResponse, error)
 }
@@ -46,9 +46,9 @@ func (c *siteServiceClient) CreateSite(ctx context.Context, in *CreateSideReques
 	return out, nil
 }
 
-func (c *siteServiceClient) GetSide(ctx context.Context, in *GetSideRequest, opts ...grpc.CallOption) (*GetSideResponse, error) {
-	out := new(GetSideResponse)
-	err := c.cc.Invoke(ctx, "/online_shop.management.v1.SiteService/GetSide", in, out, opts...)
+func (c *siteServiceClient) GetSite(ctx context.Context, in *GetSiteRequest, opts ...grpc.CallOption) (*GetSiteResponse, error) {
+	out := new(GetSiteResponse)
+	err := c.cc.Invoke(ctx, "/online_shop.management.v1.SiteService/GetSite", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (c *siteServiceClient) ListSites(ctx context.Context, in *ListSitesRequest,
 type SiteServiceServer interface {
 	// CreateSite - implements (this is a comment for public API)
 	CreateSite(context.Context, *CreateSideRequest) (*CreateSideResponse, error)
-	GetSide(context.Context, *GetSideRequest) (*GetSideResponse, error)
+	GetSite(context.Context, *GetSiteRequest) (*GetSiteResponse, error)
 	DeleteSite(context.Context, *DeleteSiteRequest) (*DeleteSiteResponse, error)
 	ListSites(context.Context, *ListSitesRequest) (*ListSitesResponse, error)
 	mustEmbedUnimplementedSiteServiceServer()
@@ -92,8 +92,8 @@ type UnimplementedSiteServiceServer struct {
 func (UnimplementedSiteServiceServer) CreateSite(context.Context, *CreateSideRequest) (*CreateSideResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSite not implemented")
 }
-func (UnimplementedSiteServiceServer) GetSide(context.Context, *GetSideRequest) (*GetSideResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSide not implemented")
+func (UnimplementedSiteServiceServer) GetSite(context.Context, *GetSiteRequest) (*GetSiteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSite not implemented")
 }
 func (UnimplementedSiteServiceServer) DeleteSite(context.Context, *DeleteSiteRequest) (*DeleteSiteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSite not implemented")
@@ -132,20 +132,20 @@ func _SiteService_CreateSite_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SiteService_GetSide_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSideRequest)
+func _SiteService_GetSite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSiteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SiteServiceServer).GetSide(ctx, in)
+		return srv.(SiteServiceServer).GetSite(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/online_shop.management.v1.SiteService/GetSide",
+		FullMethod: "/online_shop.management.v1.SiteService/GetSite",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SiteServiceServer).GetSide(ctx, req.(*GetSideRequest))
+		return srv.(SiteServiceServer).GetSite(ctx, req.(*GetSiteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -198,8 +198,8 @@ var SiteService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SiteService_CreateSite_Handler,
 		},
 		{
-			MethodName: "GetSide",
-			Handler:    _SiteService_GetSide_Handler,
+			MethodName: "GetSite",
+			Handler:    _SiteService_GetSite_Handler,
 		},
 		{
 			MethodName: "DeleteSite",

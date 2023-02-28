@@ -19,11 +19,6 @@ func New(ctrlSite controllersSite.Service) *ServiceImpl {
 	}
 }
 
-func (s ServiceImpl) GetSide(ctx context.Context, request *api.GetSideRequest) (*api.GetSideResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (s ServiceImpl) DeleteSite(ctx context.Context, request *api.DeleteSiteRequest) (*api.DeleteSiteResponse, error) {
 	//TODO implement me
 	panic("implement me")

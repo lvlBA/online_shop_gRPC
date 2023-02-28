@@ -169,7 +169,7 @@ func (x *CreateSideResponse) GetSite() *Site {
 	return nil
 }
 
-type GetSideRequest struct {
+type GetSiteRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -177,8 +177,8 @@ type GetSideRequest struct {
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (x *GetSideRequest) Reset() {
-	*x = GetSideRequest{}
+func (x *GetSiteRequest) Reset() {
+	*x = GetSiteRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_site_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -186,13 +186,13 @@ func (x *GetSideRequest) Reset() {
 	}
 }
 
-func (x *GetSideRequest) String() string {
+func (x *GetSiteRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetSideRequest) ProtoMessage() {}
+func (*GetSiteRequest) ProtoMessage() {}
 
-func (x *GetSideRequest) ProtoReflect() protoreflect.Message {
+func (x *GetSiteRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_site_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -204,19 +204,19 @@ func (x *GetSideRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetSideRequest.ProtoReflect.Descriptor instead.
-func (*GetSideRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetSiteRequest.ProtoReflect.Descriptor instead.
+func (*GetSiteRequest) Descriptor() ([]byte, []int) {
 	return file_site_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetSideRequest) GetId() string {
+func (x *GetSiteRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-type GetSideResponse struct {
+type GetSiteResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -224,8 +224,8 @@ type GetSideResponse struct {
 	Site *Site `protobuf:"bytes,1,opt,name=site,proto3" json:"site,omitempty"`
 }
 
-func (x *GetSideResponse) Reset() {
-	*x = GetSideResponse{}
+func (x *GetSiteResponse) Reset() {
+	*x = GetSiteResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_site_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -233,13 +233,13 @@ func (x *GetSideResponse) Reset() {
 	}
 }
 
-func (x *GetSideResponse) String() string {
+func (x *GetSiteResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetSideResponse) ProtoMessage() {}
+func (*GetSiteResponse) ProtoMessage() {}
 
-func (x *GetSideResponse) ProtoReflect() protoreflect.Message {
+func (x *GetSiteResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_site_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -251,12 +251,12 @@ func (x *GetSideResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetSideResponse.ProtoReflect.Descriptor instead.
-func (*GetSideResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetSiteResponse.ProtoReflect.Descriptor instead.
+func (*GetSiteResponse) Descriptor() ([]byte, []int) {
 	return file_site_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetSideResponse) GetSite() *Site {
+func (x *GetSiteResponse) GetSite() *Site {
 	if x != nil {
 		return x.Site
 	}
@@ -459,9 +459,9 @@ var file_site_proto_rawDesc = []byte{
 	0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x5f, 0x73, 0x68, 0x6f, 0x70,
 	0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x53,
 	0x69, 0x74, 0x65, 0x52, 0x04, 0x73, 0x69, 0x74, 0x65, 0x22, 0x20, 0x0a, 0x0e, 0x47, 0x65, 0x74,
-	0x53, 0x69, 0x64, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0x53, 0x69, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69,
 	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x46, 0x0a, 0x0f, 0x47,
-	0x65, 0x74, 0x53, 0x69, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33,
+	0x65, 0x74, 0x53, 0x69, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33,
 	0x0a, 0x04, 0x73, 0x69, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x6f,
 	0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x5f, 0x73, 0x68, 0x6f, 0x70, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67,
 	0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x52, 0x04, 0x73,
@@ -487,12 +487,12 @@ var file_site_proto_rawDesc = []byte{
 	0x74, 0x1a, 0x2d, 0x2e, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x5f, 0x73, 0x68, 0x6f, 0x70, 0x2e,
 	0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x53, 0x69, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x00, 0x12, 0x62, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x53, 0x69, 0x64, 0x65, 0x12, 0x29, 0x2e,
+	0x22, 0x00, 0x12, 0x62, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x53, 0x69, 0x74, 0x65, 0x12, 0x29, 0x2e,
 	0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x5f, 0x73, 0x68, 0x6f, 0x70, 0x2e, 0x6d, 0x61, 0x6e, 0x61,
-	0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x69, 0x64,
+	0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x69, 0x74,
 	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2a, 0x2e, 0x6f, 0x6e, 0x6c, 0x69, 0x6e,
 	0x65, 0x5f, 0x73, 0x68, 0x6f, 0x70, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e,
-	0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x69, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70,
+	0x74, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x69, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x6b, 0x0a, 0x0a, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
 	0x53, 0x69, 0x74, 0x65, 0x12, 0x2c, 0x2e, 0x6f, 0x6e, 0x6c, 0x69, 0x6e, 0x65, 0x5f, 0x73, 0x68,
 	0x6f, 0x70, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x76, 0x31,
@@ -530,8 +530,8 @@ var file_site_proto_goTypes = []interface{}{
 	(*Site)(nil),               // 0: online_shop.management.v1.Site
 	(*CreateSideRequest)(nil),  // 1: online_shop.management.v1.CreateSideRequest
 	(*CreateSideResponse)(nil), // 2: online_shop.management.v1.CreateSideResponse
-	(*GetSideRequest)(nil),     // 3: online_shop.management.v1.GetSideRequest
-	(*GetSideResponse)(nil),    // 4: online_shop.management.v1.GetSideResponse
+	(*GetSiteRequest)(nil),     // 3: online_shop.management.v1.GetSiteRequest
+	(*GetSiteResponse)(nil),    // 4: online_shop.management.v1.GetSiteResponse
 	(*DeleteSiteRequest)(nil),  // 5: online_shop.management.v1.DeleteSiteRequest
 	(*DeleteSiteResponse)(nil), // 6: online_shop.management.v1.DeleteSiteResponse
 	(*ListSitesRequest)(nil),   // 7: online_shop.management.v1.ListSitesRequest
@@ -540,15 +540,15 @@ var file_site_proto_goTypes = []interface{}{
 }
 var file_site_proto_depIdxs = []int32{
 	0, // 0: online_shop.management.v1.CreateSideResponse.site:type_name -> online_shop.management.v1.Site
-	0, // 1: online_shop.management.v1.GetSideResponse.site:type_name -> online_shop.management.v1.Site
+	0, // 1: online_shop.management.v1.GetSiteResponse.site:type_name -> online_shop.management.v1.Site
 	9, // 2: online_shop.management.v1.ListSitesRequest.pagination:type_name -> online_shop.management.v1.Pagination
 	0, // 3: online_shop.management.v1.ListSitesResponse.sites:type_name -> online_shop.management.v1.Site
 	1, // 4: online_shop.management.v1.SiteService.CreateSite:input_type -> online_shop.management.v1.CreateSideRequest
-	3, // 5: online_shop.management.v1.SiteService.GetSide:input_type -> online_shop.management.v1.GetSideRequest
+	3, // 5: online_shop.management.v1.SiteService.GetSite:input_type -> online_shop.management.v1.GetSiteRequest
 	5, // 6: online_shop.management.v1.SiteService.DeleteSite:input_type -> online_shop.management.v1.DeleteSiteRequest
 	7, // 7: online_shop.management.v1.SiteService.ListSites:input_type -> online_shop.management.v1.ListSitesRequest
 	2, // 8: online_shop.management.v1.SiteService.CreateSite:output_type -> online_shop.management.v1.CreateSideResponse
-	4, // 9: online_shop.management.v1.SiteService.GetSide:output_type -> online_shop.management.v1.GetSideResponse
+	4, // 9: online_shop.management.v1.SiteService.GetSite:output_type -> online_shop.management.v1.GetSiteResponse
 	6, // 10: online_shop.management.v1.SiteService.DeleteSite:output_type -> online_shop.management.v1.DeleteSiteResponse
 	8, // 11: online_shop.management.v1.SiteService.ListSites:output_type -> online_shop.management.v1.ListSitesResponse
 	8, // [8:12] is the sub-list for method output_type
@@ -602,7 +602,7 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSideRequest); i {
+			switch v := v.(*GetSiteRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -614,7 +614,7 @@ func file_site_proto_init() {
 			}
 		}
 		file_site_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSideResponse); i {
+			switch v := v.(*GetSiteResponse); i {
 			case 0:
 				return &v.state
 			case 1:

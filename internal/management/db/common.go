@@ -19,7 +19,7 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	}
 
 	var id string
-	if err = s.sqlClient.QueryRowContext(ctx, query).Scan(&id); err != nil {
+	if err = s.DB.QueryRowContext(ctx, query).Scan(&id); err != nil {
 		return "", err
 	}
 

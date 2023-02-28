@@ -2,13 +2,15 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
-	sql "github.com/jmoiron/sqlx"
 	"github.com/lvlBA/online_shop/internal/management/models"
 )
 
 type SqlClient interface {
+	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
+	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
 
 type Site interface {
@@ -24,6 +26,7 @@ type Service interface {
 
 type service interface {
 	Service
+	SqlClient
 	create(ctx context.Context, table string, req any) (string, error)
 	update(ctx context.Context, table, id string, req any) error
 	delete(ctx context.Context, table, id string) error

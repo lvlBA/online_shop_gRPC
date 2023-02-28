@@ -10,7 +10,7 @@ option go_package = "github.com/lvlBA/online_shop/management;management";
 service SiteService {
   // CreateSite - implements (this is a comment for public API)
   rpc CreateSite(CreateSideRequest) returns (CreateSideResponse) {}
-  rpc GetSide(GetSideRequest) returns (GetSideResponse) {}
+  rpc GetSite(GetSiteRequest) returns (GetSiteResponse) {}
   rpc DeleteSite(DeleteSiteRequest) returns (DeleteSiteResponse) {}
   rpc ListSites(ListSitesRequest) returns (ListSitesResponse) {}
 }
@@ -28,11 +28,11 @@ message CreateSideResponse {
   Site site = 1;
 }
 
-message GetSideRequest {
+message GetSiteRequest {
   string id = 1;
 }
 
-message GetSideResponse {
+message GetSiteResponse {
   Site site = 1;
 }
 
