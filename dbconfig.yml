@@ -1,4 +1,4 @@
-local:
+development:
   dialect: postgres
   datasource: dbname=db user=db password=db sslmode=disable port=5478
   dir: migrations
