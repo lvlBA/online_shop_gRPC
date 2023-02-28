@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/doug-martin/goqu"
+	"github.com/doug-martin/goqu/v9"
 	"github.com/lvlBA/online_shop/internal/management/models"
 )
 
@@ -36,7 +36,7 @@ func (s *SiteImpl) CreateSite(ctx context.Context, params *CreateSiteParams) (*m
 func (s *SiteImpl) GetSite(ctx context.Context, id string) (*models.Site, error) {
 	result := &models.Site{}
 
-	query, _, err := goqu.From(tableNameSite).Select("*").Where(goqu.Ex{"id": id}).ToSql()
+	query, _, err := goqu.From(tableNameSite).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create query: %w", err)
 	}
@@ -49,13 +49,13 @@ func (s *SiteImpl) GetSite(ctx context.Context, id string) (*models.Site, error)
 }
 
 func (s *SiteImpl) DeleteSite(ctx context.Context, id string) error {
-	panic("unimplemented")
+	return s.svc.delete(ctx, tableNameSite, id)
 }
 
 type ListSitesFilter struct {
 }
 
-func (f *ListSitesFilter) Filter(ds *goqu.Dataset) *goqu.Dataset {
+func (f *ListSitesFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset {
 	// TODO: implements
 
 	return ds

@@ -11,6 +11,7 @@ type SqlClient interface {
 	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
 type Site interface {

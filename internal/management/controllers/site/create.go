@@ -17,10 +17,6 @@ func (s *ServiceImpl) Create(ctx context.Context, params *CreateParams) (*models
 	})
 }
 
-func (s *ServiceImpl) Delete(ctx context.Context, id string) error {
-	panic("unimplemented")
-}
-
 type ListParams struct {
 }
 

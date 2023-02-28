@@ -28,6 +28,6 @@ func (s ServiceImpl) GetSite(ctx context.Context, req *api.GetSiteRequest) (*api
 
 func validateGetSideReq(req *api.GetSiteRequest) error {
 	return validation.Errors{
-		"name": validation.Validate(req.Id, validation.Required, is.UUIDv4),
+		"id": validation.Validate(req.Id, validation.Required, is.UUIDv4),
 	}.Filter()
 }
