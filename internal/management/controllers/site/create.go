@@ -16,10 +16,3 @@ func (s *ServiceImpl) Create(ctx context.Context, params *CreateParams) (*models
 		Name: params.Name,
 	})
 }
-
-type ListParams struct {
-}
-
-func (s *ServiceImpl) List(ctx context.Context, params *ListParams) ([]*models.Site, error) {
-	panic("unimplemented")
-}

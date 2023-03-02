@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/lvlBA/online_shop/internal/management/models"
+	utilspagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
 )
 
 const tableNameSite = "sites"
@@ -53,14 +54,27 @@ func (s *SiteImpl) DeleteSite(ctx context.Context, id string) error {
 }
 
 type ListSitesFilter struct {
+	Pagination *models.Pagination
 }
 
 func (f *ListSitesFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset {
-	// TODO: implements
+	if f.Pagination != nil {
+		utilspagination.NewPagination(f.Pagination.Page, f.Pagination.Limit).DataSet(ds)
+	}
 
 	return ds
 }
 
 func (s *SiteImpl) ListSites(ctx context.Context, filter *ListSitesFilter) ([]*models.Site, error) {
-	panic("unimplemented")
+	ds := goqu.From(tableNameSite).Select("*")
+	ds = filter.Filter(ds)
+	query, _, err := ds.ToSQL()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create query: %w", err)
+	}
+	result := make([]*models.Site, 0)
+	if err = s.svc.SelectContext(ctx, &result, query); err != nil {
+		return nil, err
+	}
+	return result, nil
 }
