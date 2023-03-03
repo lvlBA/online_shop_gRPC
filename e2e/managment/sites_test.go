@@ -26,6 +26,7 @@ func compareSiteResp(want, got siteResponse) bool {
 	}
 	return compareSite(want.GetSite(), got.GetSite())
 }
+
 func compareSite(want, got *api.Site) bool {
 	return want.Id == got.Id && want.Name == got.Name
 }
@@ -42,10 +43,12 @@ func Test_sites(t *testing.T) {
 	if err := env.Parse(cfg); err != nil {
 		t.Fatalf("failed to parse config: %s", err)
 	}
+
 	cli, err := New(ctx, cfg)
 	if err != nil {
 		t.Fatalf("failed to create site: %s", err)
 	}
+
 	t.Run("Success", func(t *testing.T) {
 		// define
 		siteName := "test_site1"
@@ -84,8 +87,8 @@ func Test_sites(t *testing.T) {
 				if _, err := cli.DeleteSite(ctx, &api.DeleteSiteRequest{Id: resp.Site.Id}); err != nil {
 					t.Fatal(err)
 				}
-
 			}()
+
 			resp2, err := cli.CreateSite(ctx, &api.CreateSideRequest{
 				Name: siteName,
 			})
@@ -97,6 +100,7 @@ func Test_sites(t *testing.T) {
 				}()
 				t.Fatalf("double site creation")
 			}
+
 			assert.Equalf(t, status.Code(err), codes.AlreadyExists,
 				"invalid code response: want(%s) got(%s)", codes.AlreadyExists, status.Code(err))
 			assert.Nil(t, resp2)
@@ -107,11 +111,9 @@ func Test_sites(t *testing.T) {
 					resp, err := cli.CreateSite(ctx, &api.CreateSideRequest{
 						Name: "",
 					})
-					if err != nil {
-						t.Fatal(err)
-					}
-					assert.Equalf(t, status.Code(err), codes.AlreadyExists,
-						"invalid code response: want(%s) got(%s)", codes.AlreadyExists, status.Code(err))
+
+					assert.Equalf(t, status.Code(err), codes.InvalidArgument,
+						"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 					assert.Nil(t, resp)
 				})
 			})

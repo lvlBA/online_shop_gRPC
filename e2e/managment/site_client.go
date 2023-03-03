@@ -3,9 +3,9 @@ package managment
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc/credentials/insecure"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
 )
@@ -15,7 +15,7 @@ type SiteClientImpl struct {
 }
 
 type Config struct {
-	Addr string "env:\"ADDR\" envDefault: \"Localhost: 9090\""
+	Addr string `env:"ADDR" envDefault:"Localhost: 9090"`
 }
 
 func New(ctx context.Context, cfg *Config) (*SiteClientImpl, error) {

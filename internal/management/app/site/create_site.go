@@ -2,11 +2,13 @@ package site
 
 import (
 	"context"
+	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/lvlBA/online_shop/internal/management/controllers"
 	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
 	"github.com/lvlBA/online_shop/internal/management/models"
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
@@ -21,6 +23,9 @@ func (s ServiceImpl) CreateSite(ctx context.Context, req *api.CreateSideRequest)
 		Name: req.Name,
 	})
 	if err != nil {
+		if errors.Is(err, controllers.ErrorAlreadyExists) {
+			return nil, status.Error(codes.AlreadyExists, "site already exists")
+		}
 		return nil, status.Error(codes.Internal, "error create site")
 	}
 

@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/lvlBA/online_shop/internal/management/models"
@@ -39,6 +41,9 @@ func (s *SiteImpl) GetSite(ctx context.Context, id string) (*models.Site, error)
 
 	query, _, err := goqu.From(tableNameSite).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrorNotFound
+		}
 		return nil, fmt.Errorf("failed to create query: %w", err)
 	}
 

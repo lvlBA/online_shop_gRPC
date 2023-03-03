@@ -3,8 +3,8 @@ package db
 import (
 	"context"
 	"fmt"
-
 	"github.com/doug-martin/goqu/v9"
+	"strings"
 )
 
 // create - реализует создание объекта по запросу и возвращает его ID
@@ -19,7 +19,11 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	}
 
 	var id string
+
 	if err = s.DB.QueryRowContext(ctx, query).Scan(&id); err != nil {
+		if strings.Contains(err.Error(), "23505") {
+			return "", ErrorAlreadyExists
+		}
 		return "", err
 	}
 
@@ -36,8 +40,12 @@ func (s *ServiceImpl) delete(ctx context.Context, table, id string) error {
 		return err
 	}
 
-	if _, err = s.ExecContext(ctx, query); err != nil {
+	res, err := s.ExecContext(ctx, query)
+	if err != nil {
 		return err
+	}
+	if count, _ := res.RowsAffected(); count == 0 {
+		return ErrorNotFound
 	}
 
 	return nil

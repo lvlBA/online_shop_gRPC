@@ -3,13 +3,13 @@
 ## Create site
 
 *succes
-- [ ] site doesn't exist
+- [x] site doesn't exist
 
 *failed
-- [ ] site exist
+- [x] site exist
   * invalid argument:
     * field name
-  - [ ] empty 
+  - [x] empty 
 
 ## Get site
 
