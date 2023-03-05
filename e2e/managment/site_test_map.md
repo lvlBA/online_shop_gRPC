@@ -14,33 +14,33 @@
 ## Get site
 
 *succes
-- [ ] site  exist
+- [x] site  exist
 
 *failed
-- [ ] site doesn't exist
+- [x] site doesn't exist
     * invalid argument:
       * field name
-    - [ ] is bad
-    - [ ] is empty
+    - [x] is bad
+    - [x] is empty
   
 ## Delete site
 
 *succes
-- [ ] site exists
+- [x] site exists
 
 *failed
-- [ ] site doesn't exist
+- [x] site doesn't exist
     * invalid argument:
         * field name
-    - [ ] is bad
-    - [ ] is empty
+    - [x] is bad
+    - [x] is empty
 
 ## List site
 
 *succes:
    - [ ] site  exists, without pagination
     
-    *pagination:
-    - [ ] with limit (page = 0, limit = 1)
-    - [ ] with limit (page = 2, limit = 1)
+  *pagination:
+  - [ ] with limit (page = 0, limit = 1)
+  - [ ] with limit (page = 2, limit = 1)
 

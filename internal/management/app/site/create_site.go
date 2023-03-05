@@ -26,6 +26,8 @@ func (s ServiceImpl) CreateSite(ctx context.Context, req *api.CreateSideRequest)
 		if errors.Is(err, controllers.ErrorAlreadyExists) {
 			return nil, status.Error(codes.AlreadyExists, "site already exists")
 		}
+		s.log.Error(ctx, "failed to create site", err, "request", req)
+
 		return nil, status.Error(codes.Internal, "error create site")
 	}
 

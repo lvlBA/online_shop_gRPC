@@ -22,6 +22,8 @@ func (s ServiceImpl) DeleteSite(ctx context.Context, req *api.DeleteSiteRequest)
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
+		s.log.Error(ctx, "failed to delete site", err, "request", req)
+
 		return nil, status.Error(codes.Internal, "error delete site")
 	}
 

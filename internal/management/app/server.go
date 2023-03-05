@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/lvlBA/online_shop/internal/management/app/site"
 	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
+	"github.com/lvlBA/online_shop/pkg/logger"
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
+	"go.uber.org/zap"
 	"net"
 	"time"
 
@@ -25,6 +27,16 @@ var keepAliveParams = keepalive.ServerParameters{
 }
 
 func Run(cfg *Config) error {
+	zapLoggerCfg := zap.NewProductionConfig()
+	zapLoggerCfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	zapLoggerCfg.DisableCaller = true
+	zapLoggerCfg.DisableStacktrace = true
+	zapLogger, err := zapLoggerCfg.Build()
+	if err != nil {
+		return fmt.Errorf("failed to create logger: %w", err)
+	}
+	log := logger.NewZapLogger(zapLogger.Sugar())
+
 	grpcSvc := grpc.NewServer(
 		grpc.KeepaliveParams(keepAliveParams),
 	)
@@ -41,7 +53,7 @@ func Run(cfg *Config) error {
 
 	dbSvc := db.New(pgConn)
 	siteCtrl := controllersSite.New(dbSvc)
-	siteApp := site.New(siteCtrl)
+	siteApp := site.New(siteCtrl, log)
 
 	api.RegisterSiteServiceServer(grpcSvc, siteApp)
 
