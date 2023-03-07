@@ -3,6 +3,7 @@ package managment
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/caarlos0/env/v7"
@@ -247,8 +248,42 @@ func Test_sites(t *testing.T) {
 	t.Run("ListSite_Pagination", func(t *testing.T) {
 		t.Run("Succes_pagination", func(t *testing.T) {
 			t.Run("case_page_zero_limit_one", func(t *testing.T) {
-				// todo tests
-			})
+				for i := 0; i < 20; i++ {
+					siteName := fmt.Sprint(i + 252)
+					want := &api.CreateSideResponse{Site: &api.Site{
+						Id:   "",
+						Name: siteName,
+					}}
+					// check
+					got, err := cli.CreateSite(ctx, &api.CreateSideRequest{
+						Name: siteName,
+					})
+					if err != nil {
+						t.Fatal(err)
+					}
+					want.Site.Id = got.Site.Id
+					defer func() {
+						if _, err := cli.DeleteSite(ctx, &api.DeleteSiteRequest{Id: got.Site.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
+				}
+			//
+			//	for i := 0; i < 20; i++ {
+			//		siteName := fmt.Sprint(i + 252)
+			//		want := &api.ListSitesResponse{Sites: []*api.Site{
+			//			{
+			//				Id:   "",
+			//				Name: siteName,
+			//			},
+			//		}}
+			//	}
+			//	got, err := cli.ListSites(ctx, &api.ListSitesRequest
+			//	}
+			//	if err != nil {
+			//		t.Fatal(err)
+			//	}
+			//})
 			t.Run("case_page_two_limit_one", func(t *testing.T) {
 				// todo tests
 			})

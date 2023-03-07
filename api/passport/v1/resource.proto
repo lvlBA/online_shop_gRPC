@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package online_shop.passport.v1;
+
+import "pagination.proto";
+
+option go_package = "github.com/lvlBA/online_shop/passport;passport";
+
+service ResourceService {
+  rpc CreateResource (CreateResourceRequest) returns (CreateResourceResponse){}
+  rpc GetResource (GetResourceRequest) returns (GetResourceResponse){}
+  rpc DeleteResource (DeleteResourceRequest) returns (DeleteResourceResponse){}
+  rpc ListResource (ListResourceRequest) returns (ListResourceResponce){}
+
+  rpc SetUserAccess (SetUserAccessRequest) returns (SetUserAccessResponse){}
+  rpc DeleteUserAccess (DeleteUserAccessRequest) returns (DeleteUserAccessResponse){}
+}
+
+message Resource {
+  string id = 1;
+  string urn = 2;
+}
+
+
+message CreateResourceRequest {
+  string urn = 1;
+}
+
+message CreateResourceResponse {
+Resource resource = 1;
+}
+
+message GetResourceRequest {
+  string id = 1;
+}
+
+message GetResourceResponse {
+  Resource resource = 1;
+}
+
+message DeleteResourceRequest {
+  string id = 1;
+}
+
+message DeleteResourceResponse {
+}
+
+message ListResourceRequest {
+  Pagination pagination = 1;
+}
+
+message ListResourceResponce {
+  repeated Resource resource = 1;
+}
+
+message SetUserAccessRequest {
+  string user_id = 1;
+  string resource_id = 2;
+}
+
+message SetUserAccessResponse {
+}
+
+message DeleteUserAccessRequest {
+  string user_id = 1;
+  string resource_id = 2;
+}
+
+message DeleteUserAccessResponse {
+}

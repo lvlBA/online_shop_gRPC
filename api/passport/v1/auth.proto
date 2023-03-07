@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package online_shop.passport.v1;
+
+option go_package = "github.com/lvlBA/online_shop/passport;passport";
+
+service AuthService {
+  rpc GetUserToken (GetUserTokenRequest) returns (GetUserTokenResponse){}
+  rpc CheckUser (CheckUserRequest) returns (CheckUserResponse){}
+}
+
+message GetUserTokenRequest {
+  string login = 1;
+  string pass = 2;
+}
+
+message GetUserTokenResponse {
+  string token = 1;
+}
+
+message CheckUserRequest {
+  string resource = 1;
+  string token = 2;
+}
+
+message CheckUserResponse {
+  bool ok = 1;
+}
+
