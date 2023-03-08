@@ -1,16 +1,24 @@
+# Common properties
 GOBASE			= ${shell pwd}
 GOBIN			= ${GOBASE}/bin
-PROJECTNAME		= online_shop
 COMMIT_SHA		= ${shell git log -1 --pretty=%h}
 IMG_TAG			= ${IMAGENAME}:${COMMIT_SHA}
 LATEST_TAG		= ${IMAGENAME}:latest
+
+# Management service properties
+PROJECT_NAME_MANAGEMENT		= management
 MANAGEMENT_API_PATH 		= api/management/v1
 MANAGEMENT_PROTO_API_DIR 	= api/management/v1
 MANAGEMENT_PROTO_OUT_DIR 	= pkg/management/v1
-MANAGEMENT_PROTO_API_OUT_DIR = ${PROTO_OUT_DIR}
+
+# Passport service properties
+PROJECT_NAME_PASSPORT		= passport
 PASSPORT_API_PATH 		= api/passport/v1
 PASSPORT_PROTO_API_DIR 	= api/passport/v1
 PASSPORT_PROTO_OUT_DIR 	= pkg/passport/v1
+
+# Commands
+
 .PHONY: gen-proto
 gen-proto: gen-proto-management
 
@@ -33,8 +41,15 @@ gen-proto-passport:
 		./${PASSPORT_PROTO_API_DIR}/*.proto
 
 .PHONY: build
-build:
-	GOOS=linux GOARCH=amd64 go build -o ${GOBIN}/${PROJECTNAME} ./cmd/${PROJECTNAME}/main.go || exit 1
+build: build_mgmt build_passport
+
+.PHONY: build_mgmt
+build_mgmt:
+	GOOS=linux GOARCH=amd64 go build -o ${GOBIN}/${PROJECT_NAME_MANAGEMENT} ./cmd/${PROJECT_NAME_MANAGEMENT}/main.go || exit 1
+
+.PHONY: build_passport
+build_passport:
+	GOOS=linux GOARCH=amd64 go build -o ${GOBIN}/${PROJECT_NAME_PASSPORT} ./cmd/${PROJECT_NAME_PASSPORT}/main.go || exit 1
 
 .PHONY: lint
 lint: go/lint lint-proto
@@ -53,7 +68,7 @@ test:
 
 .PHONY: govet
 govet:
-	go vet $$( go list ./... | grep -v vendor)
+	go vet $$( go list ./internal/...)
 
 .PHONY: lint-proto
 lint-proto:

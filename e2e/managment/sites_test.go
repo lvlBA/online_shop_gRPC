@@ -51,6 +51,23 @@ func compareListSites(want, got *api.ListSitesResponse) bool {
 	return true
 }
 
+func notLineCompare(exists, got []*api.Site) bool {
+	for i := range got {
+		found := false
+		for y := range exists {
+			if compareSite(exists[y], got[i]) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+
+	return true
+}
+
 func invalidFatal(t *testing.T, want, got interface{}) {
 	wantB, _ := json.MarshalIndent(want, "", "   ")
 	wantA, _ := json.MarshalIndent(got, "", "   ")
@@ -224,70 +241,90 @@ func Test_sites(t *testing.T) {
 		})
 
 	})
-	t.Run("listSite_success", func(t *testing.T) {
-		// define
-		want := &api.ListSitesResponse{Sites: []*api.Site{
-			{
-				Id:   "a9e043ff-ec81-4004-a9ab-e12ec5c01742",
-				Name: "test1",
-			},
-		}}
-
-		// check
-		got, err := cli.ListSites(ctx, &api.ListSitesRequest{Pagination: nil})
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !compareListSites(want, got) {
-			wantB, _ := json.MarshalIndent(want, "", "   ")
-			gotB, _ := json.MarshalIndent(got, "", "   ")
-			t.Fatalf("invalid response:\nwant:%s\ngot:%s", wantB, gotB)
-		}
-
-	})
 	t.Run("ListSite_Pagination", func(t *testing.T) {
-		t.Run("Succes_pagination", func(t *testing.T) {
-			t.Run("case_page_zero_limit_one", func(t *testing.T) {
-				for i := 0; i < 20; i++ {
+		t.Run("Success_pagination", func(t *testing.T) {
+			t.Run("without pagination", func(t *testing.T) {
+				// define
+				site, err := cli.CreateSite(ctx, &api.CreateSideRequest{
+					Name: "test",
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+				want := &api.ListSitesResponse{Sites: []*api.Site{
+					{
+						Id:   site.Site.Id,
+						Name: "test",
+					},
+				}}
+
+				// check
+				got, err := cli.ListSites(ctx, &api.ListSitesRequest{Pagination: nil})
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !compareListSites(want, got) {
+					wantB, _ := json.MarshalIndent(want, "", "   ")
+					gotB, _ := json.MarshalIndent(got, "", "   ")
+					t.Fatalf("invalid response:\nwant:%s\ngot:%s", wantB, gotB)
+				}
+				defer func() {
+					if _, err := cli.DeleteSite(ctx, &api.DeleteSiteRequest{Id: site.Site.Id}); err != nil {
+						t.Fatal(err)
+					}
+				}()
+			})
+			t.Run("with filter", func(t *testing.T) {
+				// define
+				exists := make([]*api.Site, 0, 20)
+				for i := 0; i < len(exists); i++ {
 					siteName := fmt.Sprint(i + 252)
-					want := &api.CreateSideResponse{Site: &api.Site{
-						Id:   "",
-						Name: siteName,
-					}}
-					// check
 					got, err := cli.CreateSite(ctx, &api.CreateSideRequest{
 						Name: siteName,
 					})
 					if err != nil {
 						t.Fatal(err)
 					}
-					want.Site.Id = got.Site.Id
+					exists = append(exists, got.Site)
 					defer func() {
 						if _, err := cli.DeleteSite(ctx, &api.DeleteSiteRequest{Id: got.Site.Id}); err != nil {
 							t.Fatal(err)
 						}
 					}()
 				}
-			//
-			//	for i := 0; i < 20; i++ {
-			//		siteName := fmt.Sprint(i + 252)
-			//		want := &api.ListSitesResponse{Sites: []*api.Site{
-			//			{
-			//				Id:   "",
-			//				Name: siteName,
-			//			},
-			//		}}
-			//	}
-			//	got, err := cli.ListSites(ctx, &api.ListSitesRequest
-			//	}
-			//	if err != nil {
-			//		t.Fatal(err)
-			//	}
-			//})
+
+				// checks
+				for limit := 0; limit <= len(exists)+1; limit++ {
+					t.Run(fmt.Sprintf("limit %d", limit), func(t *testing.T) {
+						got, err := cli.ListSites(ctx, &api.ListSitesRequest{
+							Pagination: &api.Pagination{
+								Page:  1,
+								Limit: uint64(limit),
+							},
+						})
+						switch {
+						case err != nil:
+							t.Fatal(err)
+						case limit >= len(exists) && len(got.Sites) < len(exists):
+							t.Fatalf(" limit >= len(exists) && len(got.Sites) < len(exists)")
+						case limit < len(exists) && len(got.Sites) != limit:
+							t.Fatalf(" limit < len(exists) && len(got.Sites) != limit")
+						case !notLineCompare(exists, got.Sites):
+							t.Fatalf("!notLineCompare(exists, got.Sites)")
+						}
+					})
+				}
+			})
 			t.Run("case_page_two_limit_one", func(t *testing.T) {
-				// todo tests
+				// TODO: tests
 			})
 		})
 
 	})
 }
+
+// limit 0 page 0
+// limit 1 page 0
+// created 10 objects
+// limit 15 page 2
+//

@@ -51,7 +51,7 @@ message GetUserResponse {
   User user = 1;
 }
 
-message  ChangePassRequest {
+message ChangePassRequest {
   string id = 1;
   string old_pass = 2;
   string new_pass = 3;
@@ -76,5 +76,5 @@ message ListUsersRequest {
 }
 
 message ListUsersResponse {
-repeated User users = 1;
+  repeated User users = 1;
 }

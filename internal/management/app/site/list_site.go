@@ -26,7 +26,6 @@ func (s ServiceImpl) ListSites(ctx context.Context, req *api.ListSitesRequest) (
 	if err != nil {
 		return nil, status.Error(codes.Internal, "error list sites")
 		s.log.Error(ctx, "failed to List site", err, "request", req)
-
 	}
 
 	result := make([]*api.Site, 0, len(sites))

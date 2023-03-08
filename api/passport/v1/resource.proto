@@ -10,7 +10,7 @@ service ResourceService {
   rpc CreateResource (CreateResourceRequest) returns (CreateResourceResponse){}
   rpc GetResource (GetResourceRequest) returns (GetResourceResponse){}
   rpc DeleteResource (DeleteResourceRequest) returns (DeleteResourceResponse){}
-  rpc ListResource (ListResourceRequest) returns (ListResourceResponce){}
+  rpc ListResource (ListResourceRequest) returns (ListResourceResponse){}
 
   rpc SetUserAccess (SetUserAccessRequest) returns (SetUserAccessResponse){}
   rpc DeleteUserAccess (DeleteUserAccessRequest) returns (DeleteUserAccessResponse){}
@@ -21,13 +21,12 @@ message Resource {
   string urn = 2;
 }
 
-
 message CreateResourceRequest {
   string urn = 1;
 }
 
 message CreateResourceResponse {
-Resource resource = 1;
+  Resource resource = 1;
 }
 
 message GetResourceRequest {
@@ -49,7 +48,7 @@ message ListResourceRequest {
   Pagination pagination = 1;
 }
 
-message ListResourceResponce {
+message ListResourceResponse {
   repeated Resource resource = 1;
 }
 

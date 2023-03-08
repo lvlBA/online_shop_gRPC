@@ -2,20 +2,15 @@ package app
 
 import (
 	"fmt"
-	"github.com/lvlBA/online_shop/internal/management/app/site"
-	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
-	"github.com/lvlBA/online_shop/pkg/logger"
-	api "github.com/lvlBA/online_shop/pkg/management/v1"
-	"go.uber.org/zap"
-	"net"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/jmoiron/sqlx"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 
+	"github.com/lvlBA/online_shop/internal/management/app/site"
+	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
 	"github.com/lvlBA/online_shop/internal/management/db"
+	api "github.com/lvlBA/online_shop/pkg/management/v1"
 )
 
 var keepAliveParams = keepalive.ServerParameters{
@@ -27,36 +22,28 @@ var keepAliveParams = keepalive.ServerParameters{
 }
 
 func Run(cfg *Config) error {
-	zapLoggerCfg := zap.NewProductionConfig()
-	zapLoggerCfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
-	zapLoggerCfg.DisableCaller = true
-	zapLoggerCfg.DisableStacktrace = true
-	zapLogger, err := zapLoggerCfg.Build()
+	log, err := cfg.getLogger()
 	if err != nil {
-		return fmt.Errorf("failed to create logger: %w", err)
-	}
-	log := logger.NewZapLogger(zapLogger.Sugar())
-
-	grpcSvc := grpc.NewServer(
-		grpc.KeepaliveParams(keepAliveParams),
-	)
-
-	grpcListener, err := net.Listen("tcp", cfg.GrpcAddr)
-	if err != nil {
-		return fmt.Errorf("failed to listen grpc address: %w", err)
+		return fmt.Errorf("failed to get logger: %w", err)
 	}
 
-	pgConn, err := sqlx.Connect("pgx", cfg.DbHost)
+	grpcListener, err := cfg.getGrpcListener()
 	if err != nil {
-		return fmt.Errorf("failed to connecto to db: %w", err)
+		return fmt.Errorf("failed to get listener: %w", err)
 	}
 
-	dbSvc := db.New(pgConn)
+	conn, err := cfg.getDatabaseConnection()
+	if err != nil {
+		return fmt.Errorf("failed to get db connection: %w", err)
+	}
+
+	// controllers
+	dbSvc := db.New(conn)
 	siteCtrl := controllersSite.New(dbSvc)
 	siteApp := site.New(siteCtrl, log)
 
+	grpcSvc := cfg.getGrpcServer()
 	api.RegisterSiteServiceServer(grpcSvc, siteApp)
-
 	if err = grpcSvc.Serve(grpcListener); err != nil {
 		return fmt.Errorf("failed to start service: %w", err)
 	}
