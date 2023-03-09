@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package online_shop.passport.v1;
 
-option go_package = "github.com/lvlBA/online_shop/paspport;passport";
+option go_package = "github.com/lvlBA/online_shop/passport;passport";
 
 message Pagination {
   uint64 page = 1;

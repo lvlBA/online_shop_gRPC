@@ -4,19 +4,19 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE users
 (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    FirstName varchar NOT NULL,
-    LastName varchar NOT NULL,
-    Age int NOT NULL,
-    Sex int,
-    Login varchar NOT NULL UNIQUE,
-    Password varchar NOT NULL UNIQUE,
+    first_name text NOT NULL,
+    last_name text NOT NULL,
+    age int NOT NULL,
+    sex int NOT NULL,
+    login text NOT NULL UNIQUE,
+    hash_password text NOT NULL UNIQUE,
     created_at timestamp DEFAULT now(),
-    changed_at timestamp DEFAULT current_timestamp
+    changed_at timestamp
 );
 
 
 
 -- +migrate Down
 DROP TABLE users;
-DROP EXTENSION "uuid-ossp";
+
 

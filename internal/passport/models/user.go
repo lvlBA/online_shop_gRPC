@@ -7,5 +7,5 @@ type User struct {
 	Age          uint32 `db:"age"`
 	Sex          Sex    `db:"sex"`
 	Login        string `db:"login"`
-	HashPassword string `db:"hasp_password"`
+	HashPassword string `db:"hash_password"`
 }

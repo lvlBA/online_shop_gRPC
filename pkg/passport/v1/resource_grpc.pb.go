@@ -25,7 +25,7 @@ type ResourceServiceClient interface {
 	CreateResource(ctx context.Context, in *CreateResourceRequest, opts ...grpc.CallOption) (*CreateResourceResponse, error)
 	GetResource(ctx context.Context, in *GetResourceRequest, opts ...grpc.CallOption) (*GetResourceResponse, error)
 	DeleteResource(ctx context.Context, in *DeleteResourceRequest, opts ...grpc.CallOption) (*DeleteResourceResponse, error)
-	ListResource(ctx context.Context, in *ListResourceRequest, opts ...grpc.CallOption) (*ListResourceResponce, error)
+	ListResource(ctx context.Context, in *ListResourceRequest, opts ...grpc.CallOption) (*ListResourceResponse, error)
 	SetUserAccess(ctx context.Context, in *SetUserAccessRequest, opts ...grpc.CallOption) (*SetUserAccessResponse, error)
 	DeleteUserAccess(ctx context.Context, in *DeleteUserAccessRequest, opts ...grpc.CallOption) (*DeleteUserAccessResponse, error)
 }
@@ -65,8 +65,8 @@ func (c *resourceServiceClient) DeleteResource(ctx context.Context, in *DeleteRe
 	return out, nil
 }
 
-func (c *resourceServiceClient) ListResource(ctx context.Context, in *ListResourceRequest, opts ...grpc.CallOption) (*ListResourceResponce, error) {
-	out := new(ListResourceResponce)
+func (c *resourceServiceClient) ListResource(ctx context.Context, in *ListResourceRequest, opts ...grpc.CallOption) (*ListResourceResponse, error) {
+	out := new(ListResourceResponse)
 	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.ResourceService/ListResource", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ type ResourceServiceServer interface {
 	CreateResource(context.Context, *CreateResourceRequest) (*CreateResourceResponse, error)
 	GetResource(context.Context, *GetResourceRequest) (*GetResourceResponse, error)
 	DeleteResource(context.Context, *DeleteResourceRequest) (*DeleteResourceResponse, error)
-	ListResource(context.Context, *ListResourceRequest) (*ListResourceResponce, error)
+	ListResource(context.Context, *ListResourceRequest) (*ListResourceResponse, error)
 	SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error)
 	DeleteUserAccess(context.Context, *DeleteUserAccessRequest) (*DeleteUserAccessResponse, error)
 	mustEmbedUnimplementedResourceServiceServer()
@@ -118,7 +118,7 @@ func (UnimplementedResourceServiceServer) GetResource(context.Context, *GetResou
 func (UnimplementedResourceServiceServer) DeleteResource(context.Context, *DeleteResourceRequest) (*DeleteResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteResource not implemented")
 }
-func (UnimplementedResourceServiceServer) ListResource(context.Context, *ListResourceRequest) (*ListResourceResponce, error) {
+func (UnimplementedResourceServiceServer) ListResource(context.Context, *ListResourceRequest) (*ListResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListResource not implemented")
 }
 func (UnimplementedResourceServiceServer) SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error) {

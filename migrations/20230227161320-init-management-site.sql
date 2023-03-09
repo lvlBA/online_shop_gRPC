@@ -13,4 +13,3 @@ CREATE TABLE sites
 
 -- +migrate Down
 DROP TABLE sites;
-DROP EXTENSION "uuid-ossp";

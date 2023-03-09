@@ -19,7 +19,7 @@ func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	site, err := s.ctrlUser.CreateUser(ctx, &controllersUser.CreateUserParams{
+	user, err := s.ctrlUser.CreateUser(ctx, &controllersUser.CreateUserParams{
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Age:       req.Age,
@@ -37,7 +37,7 @@ func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	}
 
 	return &api.CreateUserResponse{
-		User: adaptSiteToApi(site),
+		User: adaptUserToApi(user),
 	}, nil
 }
 
@@ -52,7 +52,7 @@ func validateCreateUserReq(req *api.CreateUserRequest) error {
 	}.Filter()
 }
 
-func adaptSiteToApi(model *models.User) *api.User {
+func adaptUserToApi(model *models.User) *api.User {
 	return &api.User{
 		Id:        model.ID,
 		FirstName: model.FirstName,

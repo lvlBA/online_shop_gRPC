@@ -11,8 +11,8 @@ type User interface {
 	CreateUser(ctx context.Context, params *CreateUserParams) (*models.User, error)
 	GetUser(ctx context.Context, id string) (*models.User, error)
 	DeleteUser(ctx context.Context, id string) error
-	//ListUsers(ctx context.Context, filter *ListUserFilters) ([]*models.User, error)
-	ChangePass(ctx context.Context, login string) error
+	ListUsers(ctx context.Context, filter *ListUserFilter) ([]*models.User, error)
+	ChangePass(ctx context.Context, id string, oldPass string, newPass string) error
 }
 
 type Service interface {
