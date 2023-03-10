@@ -1,11 +1,13 @@
 package app
 
 import (
+	"net"
+
 	"github.com/jmoiron/sqlx"
+	"google.golang.org/grpc"
+
 	"github.com/lvlBA/online_shop/internal/bootstrap"
 	"github.com/lvlBA/online_shop/pkg/logger"
-	"google.golang.org/grpc"
-	"net"
 )
 
 type Config struct {

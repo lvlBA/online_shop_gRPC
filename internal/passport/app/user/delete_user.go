@@ -22,9 +22,9 @@ func (s ServiceImpl) DeleteUser(ctx context.Context, req *api.DeleteUserRequest)
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
-		s.log.Error(ctx, "failed to delete site", err, "request", req)
+		s.log.Error(ctx, "failed to delete user", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error delete site")
+		return nil, status.Error(codes.Internal, "error delete user")
 	}
 
 	return &api.DeleteUserResponse{}, nil

@@ -25,7 +25,7 @@ message User {
   string id = 1;
   string first_name = 2;
   string last_name = 3;
-  uint32 age = 4;
+  uint64 age = 4;
   Sex sex = 5;
   string login = 6;
 }
@@ -33,7 +33,7 @@ message User {
 message CreateUserRequest {
   string first_name = 1;
   string last_name = 2;
-  uint32 age = 3;
+  uint64 age = 3;
   Sex sex = 4;
   string login = 5;
   string pass = 6;

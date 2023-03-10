@@ -2,14 +2,15 @@ package app
 
 import (
 	"fmt"
-	"github.com/lvlBA/online_shop/internal/management/app/site"
-	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
-	"github.com/lvlBA/online_shop/internal/management/db"
-	api "github.com/lvlBA/online_shop/pkg/management/v1"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc/keepalive"
+
+	"github.com/lvlBA/online_shop/internal/management/app/site"
+	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
+	"github.com/lvlBA/online_shop/internal/management/db"
+	api "github.com/lvlBA/online_shop/pkg/management/v1"
 )
 
 var keepAliveParams = keepalive.ServerParameters{

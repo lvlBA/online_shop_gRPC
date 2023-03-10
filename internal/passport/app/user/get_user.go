@@ -23,9 +23,9 @@ func (s ServiceImpl) GetUser(ctx context.Context, req *api.GetUserRequest) (*api
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "site not found")
 		}
-		s.log.Error(ctx, "failed to get site", err, "request", req)
+		s.log.Error(ctx, "failed to get user", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error get site")
+		return nil, status.Error(codes.Internal, "error get user")
 	}
 
 	return &api.GetUserResponse{

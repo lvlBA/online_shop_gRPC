@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
@@ -29,11 +30,11 @@ func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorAlreadyExists) {
-			return nil, status.Error(codes.AlreadyExists, "site already exists")
+			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
-		s.log.Error(ctx, "failed to create site", err, "request", req)
+		s.log.Error(ctx, "failed to create user", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error create site")
+		return nil, status.Error(codes.Internal, "error create user")
 	}
 
 	return &api.CreateUserResponse{
@@ -43,12 +44,43 @@ func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 
 func validateCreateUserReq(req *api.CreateUserRequest) error {
 	return validation.Errors{
-		"first_name": validation.Validate(req.FirstName, validation.Required), // тут только буквы
-		"last_name":  validation.Validate(req.LastName, validation.Required),  // тут только буквы
-		"age":        validation.Validate(req.Age, validation.Required),       // от 0 до 200
-		"sex":        validation.Validate(req.Sex, validation.Required),       // используем только заданные значения
-		"login":      validation.Validate(req.Login, validation.Required),     // ограниччение длинны
-		"pass":       validation.Validate(req.Pass, validation.Required),      // сложность пароля
+		"first_name": validation.Validate(
+			req.FirstName,
+			validation.Required,
+			validation.Match(regexp.MustCompile("^[a-zA-Z]{3,255}$")),
+		),
+		"last_name": validation.Validate(
+			req.LastName,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^[a-zA-Z]{3,255}$"),
+			),
+		),
+		"age": validation.Validate(
+			int64(req.Age),
+			validation.Required,
+			validation.Min(1),
+			validation.Max(200),
+		),
+		"sex": validation.Validate(
+			req.Sex.String(),
+			validation.Required,
+			validation.In(api.Sex_SexFemale.String(), api.Sex_SexMale.String()),
+		),
+		"login": validation.Validate(
+			req.Login,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9]{4,254}$"),
+			),
+		),
+		"pass": validation.Validate(
+			req.Pass,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^([0-9]{1,}|[a-z]{1,}|[A-Z]{1,}|[!@#$%&*()-_+=]{1,}){8,255}$"),
+			),
+		),
 	}.Filter()
 }
 

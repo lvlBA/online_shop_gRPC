@@ -6,10 +6,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/doug-martin/goqu/v9"
-	utilspagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
 
 	"github.com/lvlBA/online_shop/internal/passport/models"
+	utilspagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
 )
 
 const tableNameUser = "User"
@@ -21,7 +22,7 @@ type UserImpl struct {
 type CreateUserParams struct {
 	FirstName    string
 	LastName     string
-	Age          uint32
+	Age          uint64
 	Sex          models.Sex
 	Login        string
 	HashPassword string
@@ -106,7 +107,7 @@ func (u *UserImpl) ChangePass(ctx context.Context, id string, oldPass string, ne
 		}
 		return fmt.Errorf("failed to create query: %w", err)
 	}
-	if err = u.svc.GetContext(ctx, result, query); err != nil {
+	if err = u.svc.GetContext(ctx, result, query); err == nil {
 		hashPass := localHash(oldPass)
 		if result.ID == id && result.HashPassword == string(hashPass) {
 			ds := goqu.From(tableNameUser)
@@ -119,11 +120,9 @@ func (u *UserImpl) ChangePass(ctx context.Context, id string, oldPass string, ne
 	return err
 }
 
-func localHash(password string) (hashPass []byte) {
-
-	hash := sha512.Sum512([]byte(password))
+func localHash(pass string) (hashPass []byte) {
+	hash := sha512.Sum512([]byte(pass))
 	hashP := make([]byte, len(hash))
 	copy(hashPass, hash[:len(hash)])
 	return hashP
-
 }

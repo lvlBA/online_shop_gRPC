@@ -11,7 +11,7 @@ import (
 type CreateUserParams struct {
 	FirstName string
 	LastName  string
-	Age       uint32
+	Age       uint64
 	Sex       models.Sex
 	Login     string
 	Password  string
