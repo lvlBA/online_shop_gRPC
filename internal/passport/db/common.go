@@ -31,10 +31,6 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	return id, nil
 }
 
-func (s *ServiceImpl) update(ctx context.Context, table, id string, req any) error {
-	panic("unimplemented")
-}
-
 func (s *ServiceImpl) delete(ctx context.Context, table, id string) error {
 	query, _, err := goqu.From(table).Delete().Where(goqu.Ex{"id": id}).ToSQL()
 	if err != nil {

@@ -24,8 +24,8 @@ func (s ServiceImpl) ListSites(ctx context.Context, req *api.ListSitesRequest) (
 		Pagination: pagination,
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, "error list sites")
 		s.log.Error(ctx, "failed to List site", err, "request", req)
+		return nil, status.Error(codes.Internal, "error list sites")
 	}
 
 	result := make([]*api.Site, 0, len(sites))

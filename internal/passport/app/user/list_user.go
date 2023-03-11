@@ -24,8 +24,8 @@ func (s ServiceImpl) ListUsers(ctx context.Context, req *api.ListUsersRequest) (
 		Pagination: pagination,
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, "error list users")
 		s.log.Error(ctx, "failed to List users", err, "request", req)
+		return nil, status.Error(codes.Internal, "error list users")
 	}
 
 	result := make([]*api.User, 0, len(users))

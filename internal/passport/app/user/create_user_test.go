@@ -24,7 +24,7 @@ func Test_validateCreateUserReq(t *testing.T) {
 				Age:       34,
 				Sex:       api.Sex_SexMale,
 				Login:     "Poltergeist",
-				Pass:      "Ae112233%",
+				Pass:      "Ae112233!",
 			},
 			},
 		},

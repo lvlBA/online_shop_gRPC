@@ -1,4 +1,4 @@
-package user
+package resource
 
 import (
 	"github.com/lvlBA/online_shop/internal/passport/db"

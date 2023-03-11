@@ -1,4 +1,4 @@
-package user
+package resource
 
 import (
 	"context"
@@ -13,24 +13,25 @@ import (
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
-func (s ServiceImpl) ChangePass(ctx context.Context, req *api.ChangePassRequest) (*api.ChangePassResponse, error) {
-	if err := validateChangePassUserReq(req); err != nil {
+func (s *ServiceImpl) DeleteResource(ctx context.Context,
+	req *api.DeleteResourceRequest) (*api.DeleteResourceResponse, error) {
+	if err := validateDeleteResourceReq(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := s.ctrlUser.ChangePass(ctx, req.Id, req.OldPass, req.NewPass); err != nil {
+	if err := s.ctrlService.DeleteResource(ctx, req.Id); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
-		s.log.Error(ctx, "failed to change pass", err, "request", req)
+		s.log.Error(ctx, "failed to delete resource", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error change password")
+		return nil, status.Error(codes.Internal, "error delete resource")
 	}
 
-	return &api.ChangePassResponse{}, nil
+	return &api.DeleteResourceResponse{}, nil
 }
 
-func validateChangePassUserReq(req *api.ChangePassRequest) error {
+func validateDeleteResourceReq(req *api.DeleteResourceRequest) error {
 	return validation.Errors{
 		"Id": validation.Validate(req.Id, validation.Required, is.UUIDv4),
 	}.Filter()

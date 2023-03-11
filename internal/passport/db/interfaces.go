@@ -17,6 +17,7 @@ type User interface {
 
 type Service interface {
 	User() User
+	Resource() Resource
 }
 
 type SqlClient interface {
@@ -32,4 +33,13 @@ type service interface {
 	create(ctx context.Context, table string, req any) (string, error)
 	update(ctx context.Context, table, id string, req any) error
 	delete(ctx context.Context, table, id string) error
+}
+
+type Resource interface {
+	CreateResource(ctx context.Context, params *CreateServiceParams) (*models.Resource, error)
+	GetResource(ctx context.Context, id string) (*models.Resource, error)
+	DeleteResource(ctx context.Context, id string) error
+	ListResource(ctx context.Context, filter *ListServiceFilter) ([]*models.Resource, error)
+	SetUserAccess(ctx context.Context, id string) error
+	DeleteUserAccess(ctx context.Context, id string) error
 }
