@@ -11,7 +11,8 @@ import (
 )
 
 type CreateServiceParams struct {
-	Urn string
+	Urn    string
+	Access bool
 }
 
 type ResourceImplementation struct {
@@ -35,8 +36,9 @@ const tableNameService = "service"
 func (r *ResourceImplementation) CreateService(ctx context.Context, params *CreateServiceParams) (*models.Resource,
 	error) {
 	model := &models.Resource{
-		Meta: models.Meta{},
-		Urn:  params.Urn,
+		Meta:   models.Meta{},
+		Urn:    params.Urn,
+		Access: params.Access,
 	}
 	model.UpdateMeta()
 
@@ -87,9 +89,49 @@ func (r *ResourceImplementation) ListResource(ctx context.Context, filter *ListS
 }
 
 func (r *ResourceImplementation) SetUserAccess(ctx context.Context, id string) error {
+	result := &models.Resource{}
 
+	query, _, err := goqu.From(tableNameService).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrorNotFound
+		}
+		return fmt.Errorf("failed to create query: %w", err)
+	}
+
+	if err = r.svc.GetContext(ctx, result, query); err != nil {
+		return err
+	}
+
+	ds := goqu.From(tableNameService)
+
+	_, _, _ = ds.Where(goqu.C("id").Eq(result.ID)).Update().Set(
+		goqu.Record{"Access": true},
+	).ToSQL()
+
+	return nil
 }
 
 func (r *ResourceImplementation) DeleteUserAccess(ctx context.Context, id string) error {
+	result := &models.Resource{}
 
+	query, _, err := goqu.From(tableNameService).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrorNotFound
+		}
+		return fmt.Errorf("failed to create query: %w", err)
+	}
+
+	if err = r.svc.GetContext(ctx, result, query); err != nil {
+		return err
+	}
+
+	ds := goqu.From(tableNameService)
+
+	_, _, _ = ds.Where(goqu.C("id").Eq(result.ID)).Update().Set(
+		goqu.Record{"Access": false},
+	).ToSQL()
+
+	return nil
 }

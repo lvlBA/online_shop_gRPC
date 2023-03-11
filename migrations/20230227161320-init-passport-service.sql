@@ -5,6 +5,7 @@ CREATE TABLE service
 (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     urn text NOT NULL,
+    access bool DEFAULT FALSE,
     created_at timestamp DEFAULT now(),
     changed_at timestamp
 );
