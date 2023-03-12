@@ -1,0 +1,17 @@
+-- +migrate Up
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE auth
+(
+    id         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id    uuid not null REFERENCES users (id),
+    token      text NOT NULL,
+    created_at timestamp        DEFAULT now(),
+    changed_at timestamp
+);
+
+
+-- +migrate Down
+DROP TABLE auth;
+
+

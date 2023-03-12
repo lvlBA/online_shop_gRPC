@@ -12,7 +12,7 @@ type ServiceImpl struct {
 	log logger.Logger
 }
 
-func New(ctrlService controllersservice.ServiceImpl, l logger.Logger) api.ResourceServiceServer {
+func New(ctrlService controllersservice.Service, l logger.Logger) api.ResourceServiceServer {
 	return &ServiceImpl{
 		ctrlService:                        ctrlService,
 		UnimplementedResourceServiceServer: api.UnimplementedResourceServiceServer{},

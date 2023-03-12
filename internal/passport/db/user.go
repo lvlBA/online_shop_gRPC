@@ -49,18 +49,44 @@ func (u *UserImpl) CreateUser(ctx context.Context, params *CreateUserParams) (*m
 	return model, nil
 }
 
-func (u *UserImpl) GetUser(ctx context.Context, id string) (*models.User, error) {
-	result := &models.User{}
+type GetUserParams struct {
+	ID           *string
+	Login        *string
+	HashPassword *string
+}
 
-	query, _, err := goqu.From(tableNameUser).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
+func (p *GetUserParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset, error) {
+	if p.HashPassword != nil {
+		sd = sd.Where(goqu.Ex{"hash_password": *p.HashPassword})
+	}
+
+	switch {
+	case p.ID != nil:
+		return sd.Where(goqu.Ex{"id": *p.ID}), nil
+	case p.Login != nil:
+		return sd.Where(goqu.Ex{"login": *p.Login}), nil
+	default:
+		return nil, errors.New("undefined behavior: id is not set and login is not set")
+	}
+}
+
+func (u *UserImpl) GetUser(ctx context.Context, params *GetUserParams) (*models.User, error) {
+	sd, err := params.filter(goqu.From(tableNameUser).Select("*"))
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrorNotFound
-		}
+		return nil, err
+	}
+
+	query, _, err := sd.ToSQL()
+	if err != nil {
 		return nil, fmt.Errorf("failed to create query: %w", err)
 	}
 
+	result := &models.User{}
 	if err = u.svc.GetContext(ctx, result, query); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrorNotFound
+		}
+
 		return nil, err
 	}
 

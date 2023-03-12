@@ -3,13 +3,12 @@ package db
 import (
 	"context"
 	"database/sql"
-
 	"github.com/lvlBA/online_shop/internal/passport/models"
 )
 
 type User interface {
 	CreateUser(ctx context.Context, params *CreateUserParams) (*models.User, error)
-	GetUser(ctx context.Context, id string) (*models.User, error)
+	GetUser(ctx context.Context, params *GetUserParams) (*models.User, error)
 	DeleteUser(ctx context.Context, id string) error
 	ListUsers(ctx context.Context, filter *ListUserFilter) ([]*models.User, error)
 	ChangePass(ctx context.Context, id string, oldPass string, newPass string) error
@@ -18,6 +17,7 @@ type User interface {
 type Service interface {
 	User() User
 	Resource() Resource
+	Auth() Auth
 }
 
 type SqlClient interface {
@@ -42,4 +42,11 @@ type Resource interface {
 	ListResource(ctx context.Context, filter *ListServiceFilter) ([]*models.Resource, error)
 	SetUserAccess(ctx context.Context, id string) error
 	DeleteUserAccess(ctx context.Context, id string) error
+}
+
+type Auth interface {
+	CreateUserAuth(ctx context.Context, params *CreateUserTokenParams) (*models.Auth, error)
+	GetUserAuth(ctx context.Context, params *GetUserAuthParams) (*models.Auth, error)
+	DeleteUserAuth(ctx context.Context, token string) error
+	DeleteUserToken(ctx context.Context, token string) error
 }

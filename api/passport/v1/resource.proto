@@ -54,7 +54,6 @@ message ListResourceResponse {
 
 message SetUserAccessRequest {
   string user_id = 1;
-  string resource_id = 2;
 }
 
 message SetUserAccessResponse {
@@ -62,7 +61,6 @@ message SetUserAccessResponse {
 
 message DeleteUserAccessRequest {
   string user_id = 1;
-  string resource_id = 2;
 }
 
 message DeleteUserAccessResponse {

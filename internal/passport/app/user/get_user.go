@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	"errors"
-
 	"github.com/go-ozzo/ozzo-validation/is"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	controllersUser "github.com/lvlBA/online_shop/internal/passport/controllers/user"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -18,7 +18,9 @@ func (s ServiceImpl) GetUser(ctx context.Context, req *api.GetUserRequest) (*api
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	user, err := s.ctrlUser.GetUser(ctx, req.Id)
+	user, err := s.ctrlUser.GetUser(ctx, &controllersUser.GetUserParams{
+		ID: &req.Id,
+	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "site not found")

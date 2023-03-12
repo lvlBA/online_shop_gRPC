@@ -23,7 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	GetUserToken(ctx context.Context, in *GetUserTokenRequest, opts ...grpc.CallOption) (*GetUserTokenResponse, error)
-	CheckUser(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error)
+	DeleteUserToken(ctx context.Context, in *DeleteUserTokenRequest, opts ...grpc.CallOption) (*DeleteUserTokenResponse, error)
+	CheckUserAccess(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error)
 }
 
 type authServiceClient struct {
@@ -43,9 +44,18 @@ func (c *authServiceClient) GetUserToken(ctx context.Context, in *GetUserTokenRe
 	return out, nil
 }
 
-func (c *authServiceClient) CheckUser(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error) {
+func (c *authServiceClient) DeleteUserToken(ctx context.Context, in *DeleteUserTokenRequest, opts ...grpc.CallOption) (*DeleteUserTokenResponse, error) {
+	out := new(DeleteUserTokenResponse)
+	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.AuthService/DeleteUserToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) CheckUserAccess(ctx context.Context, in *CheckUserRequest, opts ...grpc.CallOption) (*CheckUserResponse, error) {
 	out := new(CheckUserResponse)
-	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.AuthService/CheckUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.AuthService/CheckUserAccess", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +67,8 @@ func (c *authServiceClient) CheckUser(ctx context.Context, in *CheckUserRequest,
 // for forward compatibility
 type AuthServiceServer interface {
 	GetUserToken(context.Context, *GetUserTokenRequest) (*GetUserTokenResponse, error)
-	CheckUser(context.Context, *CheckUserRequest) (*CheckUserResponse, error)
+	DeleteUserToken(context.Context, *DeleteUserTokenRequest) (*DeleteUserTokenResponse, error)
+	CheckUserAccess(context.Context, *CheckUserRequest) (*CheckUserResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -68,8 +79,11 @@ type UnimplementedAuthServiceServer struct {
 func (UnimplementedAuthServiceServer) GetUserToken(context.Context, *GetUserTokenRequest) (*GetUserTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserToken not implemented")
 }
-func (UnimplementedAuthServiceServer) CheckUser(context.Context, *CheckUserRequest) (*CheckUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckUser not implemented")
+func (UnimplementedAuthServiceServer) DeleteUserToken(context.Context, *DeleteUserTokenRequest) (*DeleteUserTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserToken not implemented")
+}
+func (UnimplementedAuthServiceServer) CheckUserAccess(context.Context, *CheckUserRequest) (*CheckUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckUserAccess not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -102,20 +116,38 @@ func _AuthService_GetUserToken_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_CheckUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthService_DeleteUserToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).DeleteUserToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/online_shop.passport.v1.AuthService/DeleteUserToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).DeleteUserToken(ctx, req.(*DeleteUserTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_CheckUserAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).CheckUser(ctx, in)
+		return srv.(AuthServiceServer).CheckUserAccess(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/online_shop.passport.v1.AuthService/CheckUser",
+		FullMethod: "/online_shop.passport.v1.AuthService/CheckUserAccess",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).CheckUser(ctx, req.(*CheckUserRequest))
+		return srv.(AuthServiceServer).CheckUserAccess(ctx, req.(*CheckUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -132,8 +164,12 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_GetUserToken_Handler,
 		},
 		{
-			MethodName: "CheckUser",
-			Handler:    _AuthService_CheckUser_Handler,
+			MethodName: "DeleteUserToken",
+			Handler:    _AuthService_DeleteUserToken_Handler,
+		},
+		{
+			MethodName: "CheckUserAccess",
+			Handler:    _AuthService_CheckUserAccess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
