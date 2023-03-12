@@ -1,7 +1,7 @@
 -- +migrate Up
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE service
+CREATE TABLE resources
 (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     urn text NOT NULL,
@@ -13,6 +13,6 @@ CREATE TABLE service
 
 
 -- +migrate Down
-DROP TABLE service;
+DROP TABLE resources;
 
 

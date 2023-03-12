@@ -14,6 +14,8 @@ import (
 )
 
 func (s *ServiceImpl) GetUserToken(ctx context.Context, req *api.GetUserTokenRequest) (*api.GetUserTokenResponse, error) {
+	// FIXME: валидация
+
 	user, err := s.ctrlUser.GetUser(ctx, &controllerUser.GetUserParams{
 		Login:    &req.Login,
 		Password: &req.Password,
@@ -26,7 +28,7 @@ func (s *ServiceImpl) GetUserToken(ctx context.Context, req *api.GetUserTokenReq
 		return nil, status.Error(codes.Internal, "error get user token")
 	}
 
-	token, err := s.ctrlAuth.GetUserToken(ctx, &controllerAuth.GetUserTokenRequest{
+	token, err := s.ctrlAuth.CreateUserToken(ctx, &controllerAuth.CreateUserTokenRequest{
 		UserID: user.ID,
 	})
 	if err != nil {

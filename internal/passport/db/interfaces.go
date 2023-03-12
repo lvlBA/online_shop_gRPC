@@ -31,13 +31,12 @@ type service interface {
 	Service
 	SqlClient
 	create(ctx context.Context, table string, req any) (string, error)
-	update(ctx context.Context, table, id string, req any) error
 	delete(ctx context.Context, table, id string) error
 }
 
 type Resource interface {
 	CreateResource(ctx context.Context, params *CreateServiceParams) (*models.Resource, error)
-	GetResource(ctx context.Context, id string) (*models.Resource, error)
+	GetResource(ctx context.Context, params *GetResourceParams) (*models.Resource, error)
 	DeleteResource(ctx context.Context, id string) error
 	ListResource(ctx context.Context, filter *ListServiceFilter) ([]*models.Resource, error)
 	SetUserAccess(ctx context.Context, id string) error
@@ -48,5 +47,8 @@ type Auth interface {
 	CreateUserAuth(ctx context.Context, params *CreateUserTokenParams) (*models.Auth, error)
 	GetUserAuth(ctx context.Context, params *GetUserAuthParams) (*models.Auth, error)
 	DeleteUserAuth(ctx context.Context, token string) error
-	DeleteUserToken(ctx context.Context, token string) error
+
+	CreateUserAccess(ctx context.Context, params *CreateUserAccessParams) (*models.Access, error)
+	DeleteUserAccess(ctx context.Context, params *DeleteUserAccessParams) error
+	GetUserAccess(ctx context.Context, params *GetUserAccessParams) (*models.Access, error)
 }

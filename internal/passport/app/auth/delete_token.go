@@ -12,13 +12,15 @@ import (
 )
 
 func (s *ServiceImpl) DeleteUserToken(ctx context.Context, req *api.DeleteUserTokenRequest) (*api.DeleteUserTokenResponse, error) {
+	// FIXME: валидация
+
 	if err := s.ctrlAuth.DeleteUserToken(ctx, req.Token); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
 		s.log.Error(ctx, "failed to delete token", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error delete user")
+		return nil, status.Error(codes.Internal, "error delete token")
 	}
 
 	return &api.DeleteUserTokenResponse{}, nil

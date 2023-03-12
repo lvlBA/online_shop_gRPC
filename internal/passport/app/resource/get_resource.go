@@ -16,7 +16,7 @@ func (s *ServiceImpl) GetResource(ctx context.Context, req *api.GetResourceReque
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	resource, err := s.ctrlService.GetResource(ctx, req.Id)
+	resource, err := s.ctrlService.GetResourceByID(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "site not found")
