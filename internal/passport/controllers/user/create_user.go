@@ -16,7 +16,7 @@ type CreateUserParams struct {
 	Password  string
 }
 
-func (s *ServiceImpl) Create(ctx context.Context, params *CreateUserParams) (*models.User, error) {
+func (s *ServiceImpl) CreateUser(ctx context.Context, params *CreateUserParams) (*models.User, error) {
 	return s.db.User().CreateUser(ctx, &db.CreateUserParams{
 		FirstName:    params.FirstName,
 		LastName:     params.LastName,

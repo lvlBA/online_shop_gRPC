@@ -205,19 +205,46 @@ func (a *AuthImpl) GetUserAccess(ctx context.Context, params *GetUserAccessParam
 	return result, nil
 }
 
-func (r *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, UserID string) error {
-	query, _, err := goqu.From(tableNameAccess).Select("*").Where(goqu.Ex{"user_id": UserID}, goqu.Ex{"resource_id": resourceID}).ToSQL()
+func (r *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, userID string) error {
+	queryUser, _, err := goqu.From(tableNameUser).Select("*").Where(goqu.Ex{"user_id": userID}).ToSQL()
 	if err != nil {
-		return fmt.Errorf("failed to create query: %w", err)
+		return fmt.Errorf("failed to create query user_id doesn't exists: %w", err)
 	}
-	result := &models.Auth{}
+	resultUser := &models.Auth{}
 
-	if err = r.svc.GetContext(ctx, result, query); err != nil {
+	if err = r.svc.GetContext(ctx, resultUser, queryUser); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrorNotFound
 		}
 
 		return err
 	}
+	queryResource, _, err := goqu.From(tableNameService).Select("*").Where(goqu.Ex{"id": resourceID}).ToSQL()
+	if err != nil {
+		return fmt.Errorf("failed to create query user_id doesn't exists: %w", err)
+	}
+
+	resultResource := &models.Auth{}
+
+	if err = r.svc.GetContext(ctx, resultResource, queryResource); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrorNotFound
+		}
+
+		return err
+	}
+
+	model := &models.Access{
+		Meta:       models.Meta{},
+		UserID:     userID,
+		ResourceID: resourceID,
+	}
+	model.UpdateMeta()
+
+	_, err = r.svc.create(ctx, tableNameAccess, model)
+	if err != nil {
+		return fmt.Errorf("failed to create new model: %w", err)
+	}
+
 	return nil
 }

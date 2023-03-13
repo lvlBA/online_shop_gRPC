@@ -322,9 +322,3 @@ func Test_sites(t *testing.T) {
 
 	})
 }
-
-// limit 0 page 0
-// limit 1 page 0
-// created 10 objects
-// limit 15 page 2
-//

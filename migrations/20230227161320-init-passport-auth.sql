@@ -22,5 +22,5 @@ CREATE TABLE access
 
 -- +migrate Down
 DROP TABLE auth;
-DROP TABLE access,
+DROP TABLE access;
 

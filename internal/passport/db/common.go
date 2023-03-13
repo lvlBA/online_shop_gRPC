@@ -8,7 +8,6 @@ import (
 	"github.com/doug-martin/goqu/v9"
 )
 
-// create - реализует создание объекта по запросу и возвращает его ID
 func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string, error) {
 	query, _, err := goqu.From(table).
 		Insert().

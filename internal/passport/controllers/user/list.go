@@ -12,7 +12,7 @@ type ListParams struct {
 	Pagination *models.Pagination
 }
 
-func (s *ServiceImpl) List(ctx context.Context, params *ListParams) ([]*models.User, error) {
+func (s *ServiceImpl) ListUsers(ctx context.Context, params *ListParams) ([]*models.User, error) {
 	resp, err := s.db.User().ListUsers(ctx, &db.ListUserFilter{
 		Pagination: params.Pagination,
 	})

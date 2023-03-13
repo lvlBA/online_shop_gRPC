@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"crypto/sha512"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -13,7 +12,7 @@ import (
 	utilspagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
 )
 
-const tableNameUser = "User"
+const tableNameUser = "users"
 
 type UserImpl struct {
 	svc service
@@ -125,8 +124,7 @@ func (u *UserImpl) ListUsers(ctx context.Context, filter *ListUserFilter) ([]*mo
 
 func (u *UserImpl) ChangePass(ctx context.Context, id string, oldPass string, newPass string) error {
 	result := &models.User{}
-
-	query, _, err := goqu.From(tableNameUser).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
+	query, _, err := goqu.From(tableNameUser).Select("*").Where(goqu.Ex{"id": id}, goqu.Ex{"hash_password": oldPass}).ToSQL()
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil
@@ -134,21 +132,11 @@ func (u *UserImpl) ChangePass(ctx context.Context, id string, oldPass string, ne
 		return fmt.Errorf("failed to create query: %w", err)
 	}
 	if err = u.svc.GetContext(ctx, result, query); err == nil {
-		hashPass := localHash(oldPass)
-		if result.ID == id && result.HashPassword == string(hashPass) {
-			ds := goqu.From(tableNameUser)
 
-			_, _, _ = ds.Where(goqu.C("id").Eq(result.ID)).Update().Set(
-				goqu.Record{"hash_password": string(localHash(newPass))},
-			).ToSQL()
-		}
+		ds := goqu.From(tableNameUser)
+		_, _, _ = ds.Where(goqu.C("id").Eq(result.ID)).Update().Set(
+			goqu.Record{"hash_password": newPass},
+		).ToSQL()
 	}
 	return err
-}
-
-func localHash(pass string) (hashPass []byte) {
-	hash := sha512.Sum512([]byte(pass))
-	hashP := make([]byte, len(hash))
-	copy(hashPass, hash[:len(hash)])
-	return hashP
 }

@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 	"regexp"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -17,8 +18,12 @@ import (
 
 func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest) (*api.CreateUserResponse, error) {
 	if err := validateCreateUserReq(req); err != nil {
+		fmt.Println("Tut")
+
 		return nil, status.Error(codes.InvalidArgument, err.Error())
+
 	}
+	fmt.Println("Tut")
 
 	user, err := s.ctrlUser.CreateUser(ctx, &controllersUser.CreateUserParams{
 		FirstName: req.FirstName,
@@ -38,6 +43,7 @@ func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	}
 
 	return &api.CreateUserResponse{
+
 		User: adaptUserToApi(user),
 	}, nil
 }

@@ -7,16 +7,12 @@ CREATE TABLE users
     first_name text NOT NULL,
     last_name text NOT NULL,
     age int NOT NULL,
-    sex int NOT NULL,
+    sex text NOT NULL,
     login text NOT NULL UNIQUE,
     hash_password text NOT NULL UNIQUE,
     created_at timestamp DEFAULT now(),
     changed_at timestamp
 );
 
-
-
 -- +migrate Down
 DROP TABLE users;
-
-

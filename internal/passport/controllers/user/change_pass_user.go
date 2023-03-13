@@ -7,5 +7,5 @@ import (
 )
 
 func (s *ServiceImpl) ChangePass(ctx context.Context, id string, oldPass string, newPass string) error {
-	return controllers.AdaptingErrorDB(s.db.User().ChangePass(ctx, id, oldPass, newPass))
+	return controllers.AdaptingErrorDB(s.db.User().ChangePass(ctx, id, toHash(oldPass), toHash(newPass)))
 }

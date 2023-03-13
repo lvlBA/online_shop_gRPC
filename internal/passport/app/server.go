@@ -7,10 +7,10 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc/keepalive"
 
-	"github.com/lvlBA/online_shop/internal/management/app/site"
-	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
-	"github.com/lvlBA/online_shop/internal/management/db"
-	api "github.com/lvlBA/online_shop/pkg/management/v1"
+	appuser "github.com/lvlBA/online_shop/internal/passport/app/user"
+	controllersUser "github.com/lvlBA/online_shop/internal/passport/controllers/user"
+	"github.com/lvlBA/online_shop/internal/passport/db"
+	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
 var keepAliveParams = keepalive.ServerParameters{
@@ -39,11 +39,11 @@ func Run(cfg *Config) error {
 
 	// controllers
 	dbSvc := db.New(conn)
-	siteCtrl := controllersSite.New(dbSvc)
-	siteApp := site.New(siteCtrl, log)
+	userCtrl := controllersUser.New(dbSvc)
+	userApp := appuser.New(userCtrl, log)
 
 	grpcSvc := cfg.getGrpcServer()
-	api.RegisterSiteServiceServer(grpcSvc, siteApp)
+	api.RegisterUserServiceServer(grpcSvc, userApp)
 	if err = grpcSvc.Serve(grpcListener); err != nil {
 		return fmt.Errorf("failed to start service: %w", err)
 	}
