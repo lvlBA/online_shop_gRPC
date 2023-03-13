@@ -3,7 +3,9 @@ package resource
 import (
 	"context"
 	"errors"
+	"regexp"
 
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -15,6 +17,7 @@ import (
 
 func (s *ServiceImpl) CreateResource(ctx context.Context,
 	req *api.CreateResourceRequest) (*api.CreateResourceResponse, error) {
+
 	resource, err := s.ctrlService.CreateResource(ctx, &controllersresource.CreateServiceParams{
 		Urn: req.Urn,
 	})
@@ -27,6 +30,10 @@ func (s *ServiceImpl) CreateResource(ctx context.Context,
 		return nil, status.Error(codes.Internal, "error create Resource")
 	}
 
+	if err := validateCreateResource(req); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
 	return &api.CreateResourceResponse{
 		Resource: adaptResourceToApi(resource),
 	}, nil
@@ -37,4 +44,16 @@ func adaptResourceToApi(model *models.Resource) *api.Resource {
 		Id:  model.ID,
 		Urn: model.Urn,
 	}
+}
+
+func validateCreateResource(req *api.CreateResourceRequest) error {
+	return validation.Errors{
+		"urn": validation.Validate(
+			req.Urn,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9]{4,254}$"),
+			),
+		),
+	}.Filter()
 }

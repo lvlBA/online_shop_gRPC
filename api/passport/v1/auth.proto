@@ -6,6 +6,7 @@ option go_package = "github.com/lvlBA/online_shop/passport;passport";
 
 service AuthService {
   rpc GetUserToken (GetUserTokenRequest) returns (GetUserTokenResponse){}
+  rpc SetUserAccess (SetUserAccessRequest) returns (SetUserAccessResponse){}
   rpc DeleteUserToken (DeleteUserTokenRequest) returns (DeleteUserTokenResponse){}
   rpc CheckUserAccess (CheckUserAccessRequest) returns (CheckUserAccessResponse){}
 }
@@ -14,6 +15,15 @@ message Auth {
   string id = 1;
   string login = 2;
   string token = 3;
+}
+
+message SetUserAccessRequest {
+  string user_id = 1;
+  string resource = 2;
+}
+
+message SetUserAccessResponse {
+
 }
 
 message GetUserTokenRequest {

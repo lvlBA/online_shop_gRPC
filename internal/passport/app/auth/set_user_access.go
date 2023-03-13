@@ -1,4 +1,4 @@
-package resource
+package auth
 
 import (
 	"context"
@@ -19,7 +19,7 @@ func (s *ServiceImpl) SetUserAccess(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := s.ctrlService.SetUserAccess(ctx, req.UserId); err != nil {
+	if err := s.ctrlAuth.SetUserAccess(ctx, req.UserId, req.Resource); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}

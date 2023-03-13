@@ -26,8 +26,6 @@ type ResourceServiceClient interface {
 	GetResource(ctx context.Context, in *GetResourceRequest, opts ...grpc.CallOption) (*GetResourceResponse, error)
 	DeleteResource(ctx context.Context, in *DeleteResourceRequest, opts ...grpc.CallOption) (*DeleteResourceResponse, error)
 	ListResource(ctx context.Context, in *ListResourceRequest, opts ...grpc.CallOption) (*ListResourceResponse, error)
-	SetUserAccess(ctx context.Context, in *SetUserAccessRequest, opts ...grpc.CallOption) (*SetUserAccessResponse, error)
-	DeleteUserAccess(ctx context.Context, in *DeleteUserAccessRequest, opts ...grpc.CallOption) (*DeleteUserAccessResponse, error)
 }
 
 type resourceServiceClient struct {
@@ -74,24 +72,6 @@ func (c *resourceServiceClient) ListResource(ctx context.Context, in *ListResour
 	return out, nil
 }
 
-func (c *resourceServiceClient) SetUserAccess(ctx context.Context, in *SetUserAccessRequest, opts ...grpc.CallOption) (*SetUserAccessResponse, error) {
-	out := new(SetUserAccessResponse)
-	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.ResourceService/SetUserAccess", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *resourceServiceClient) DeleteUserAccess(ctx context.Context, in *DeleteUserAccessRequest, opts ...grpc.CallOption) (*DeleteUserAccessResponse, error) {
-	out := new(DeleteUserAccessResponse)
-	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.ResourceService/DeleteUserAccess", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ResourceServiceServer is the server API for ResourceService service.
 // All implementations must embed UnimplementedResourceServiceServer
 // for forward compatibility
@@ -100,8 +80,6 @@ type ResourceServiceServer interface {
 	GetResource(context.Context, *GetResourceRequest) (*GetResourceResponse, error)
 	DeleteResource(context.Context, *DeleteResourceRequest) (*DeleteResourceResponse, error)
 	ListResource(context.Context, *ListResourceRequest) (*ListResourceResponse, error)
-	SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error)
-	DeleteUserAccess(context.Context, *DeleteUserAccessRequest) (*DeleteUserAccessResponse, error)
 	mustEmbedUnimplementedResourceServiceServer()
 }
 
@@ -120,12 +98,6 @@ func (UnimplementedResourceServiceServer) DeleteResource(context.Context, *Delet
 }
 func (UnimplementedResourceServiceServer) ListResource(context.Context, *ListResourceRequest) (*ListResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListResource not implemented")
-}
-func (UnimplementedResourceServiceServer) SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetUserAccess not implemented")
-}
-func (UnimplementedResourceServiceServer) DeleteUserAccess(context.Context, *DeleteUserAccessRequest) (*DeleteUserAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserAccess not implemented")
 }
 func (UnimplementedResourceServiceServer) mustEmbedUnimplementedResourceServiceServer() {}
 
@@ -212,42 +184,6 @@ func _ResourceService_ListResource_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ResourceService_SetUserAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ResourceServiceServer).SetUserAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/online_shop.passport.v1.ResourceService/SetUserAccess",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceServiceServer).SetUserAccess(ctx, req.(*SetUserAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ResourceService_DeleteUserAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ResourceServiceServer).DeleteUserAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/online_shop.passport.v1.ResourceService/DeleteUserAccess",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ResourceServiceServer).DeleteUserAccess(ctx, req.(*DeleteUserAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ResourceService_ServiceDesc is the grpc.ServiceDesc for ResourceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -270,14 +206,6 @@ var ResourceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListResource",
 			Handler:    _ResourceService_ListResource_Handler,
-		},
-		{
-			MethodName: "SetUserAccess",
-			Handler:    _ResourceService_SetUserAccess_Handler,
-		},
-		{
-			MethodName: "DeleteUserAccess",
-			Handler:    _ResourceService_DeleteUserAccess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

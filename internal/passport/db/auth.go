@@ -204,3 +204,20 @@ func (a *AuthImpl) GetUserAccess(ctx context.Context, params *GetUserAccessParam
 
 	return result, nil
 }
+
+func (r *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, UserID string) error {
+	query, _, err := goqu.From(tableNameAccess).Select("*").Where(goqu.Ex{"user_id": UserID}, goqu.Ex{"resource_id": resourceID}).ToSQL()
+	if err != nil {
+		return fmt.Errorf("failed to create query: %w", err)
+	}
+	result := &models.Auth{}
+
+	if err = r.svc.GetContext(ctx, result, query); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrorNotFound
+		}
+
+		return err
+	}
+	return nil
+}

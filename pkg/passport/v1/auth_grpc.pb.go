@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	GetUserToken(ctx context.Context, in *GetUserTokenRequest, opts ...grpc.CallOption) (*GetUserTokenResponse, error)
+	SetUserAccess(ctx context.Context, in *SetUserAccessRequest, opts ...grpc.CallOption) (*SetUserAccessResponse, error)
 	DeleteUserToken(ctx context.Context, in *DeleteUserTokenRequest, opts ...grpc.CallOption) (*DeleteUserTokenResponse, error)
 	CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, opts ...grpc.CallOption) (*CheckUserAccessResponse, error)
 }
@@ -38,6 +39,15 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 func (c *authServiceClient) GetUserToken(ctx context.Context, in *GetUserTokenRequest, opts ...grpc.CallOption) (*GetUserTokenResponse, error) {
 	out := new(GetUserTokenResponse)
 	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.AuthService/GetUserToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) SetUserAccess(ctx context.Context, in *SetUserAccessRequest, opts ...grpc.CallOption) (*SetUserAccessResponse, error) {
+	out := new(SetUserAccessResponse)
+	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.AuthService/SetUserAccess", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +77,7 @@ func (c *authServiceClient) CheckUserAccess(ctx context.Context, in *CheckUserAc
 // for forward compatibility
 type AuthServiceServer interface {
 	GetUserToken(context.Context, *GetUserTokenRequest) (*GetUserTokenResponse, error)
+	SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error)
 	DeleteUserToken(context.Context, *DeleteUserTokenRequest) (*DeleteUserTokenResponse, error)
 	CheckUserAccess(context.Context, *CheckUserAccessRequest) (*CheckUserAccessResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
@@ -78,6 +89,9 @@ type UnimplementedAuthServiceServer struct {
 
 func (UnimplementedAuthServiceServer) GetUserToken(context.Context, *GetUserTokenRequest) (*GetUserTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserToken not implemented")
+}
+func (UnimplementedAuthServiceServer) SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserAccess not implemented")
 }
 func (UnimplementedAuthServiceServer) DeleteUserToken(context.Context, *DeleteUserTokenRequest) (*DeleteUserTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserToken not implemented")
@@ -112,6 +126,24 @@ func _AuthService_GetUserToken_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).GetUserToken(ctx, req.(*GetUserTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_SetUserAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).SetUserAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/online_shop.passport.v1.AuthService/SetUserAccess",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).SetUserAccess(ctx, req.(*SetUserAccessRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -162,6 +194,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserToken",
 			Handler:    _AuthService_GetUserToken_Handler,
+		},
+		{
+			MethodName: "SetUserAccess",
+			Handler:    _AuthService_SetUserAccess_Handler,
 		},
 		{
 			MethodName: "DeleteUserToken",

@@ -11,6 +11,4 @@ type Service interface {
 	GetResourceByName(ctx context.Context, name string) (*models.Resource, error)
 	DeleteResource(ctx context.Context, id string) error
 	ListResource(ctx context.Context, params *ListParams) ([]*models.Resource, error)
-	SetUserAccess(ctx context.Context, id string) error
-	DeleteUserAccess(ctx context.Context, id string) error
 }

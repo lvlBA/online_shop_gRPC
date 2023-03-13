@@ -3,7 +3,9 @@ package auth
 import (
 	"context"
 	"errors"
+	"regexp"
 
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -14,7 +16,9 @@ import (
 )
 
 func (s *ServiceImpl) GetUserToken(ctx context.Context, req *api.GetUserTokenRequest) (*api.GetUserTokenResponse, error) {
-	// FIXME: валидация
+	if err := validateGetUserToken(req); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
 
 	user, err := s.ctrlUser.GetUser(ctx, &controllerUser.GetUserParams{
 		Login:    &req.Login,
@@ -40,4 +44,23 @@ func (s *ServiceImpl) GetUserToken(ctx context.Context, req *api.GetUserTokenReq
 	return &api.GetUserTokenResponse{
 		Token: token.Token,
 	}, nil
+}
+
+func validateGetUserToken(req *api.GetUserTokenRequest) error {
+	return validation.Errors{
+		"login": validation.Validate(
+			req.Login,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9]{4,254}$"),
+			),
+		),
+		"pass": validation.Validate(
+			req.Password,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^([0-9]{1,}|[a-z]{1,}|[A-Z]{1,}|[!@#$%&*()-_+=]{1,}){8,255}$"),
+			),
+		),
+	}.Filter()
 }

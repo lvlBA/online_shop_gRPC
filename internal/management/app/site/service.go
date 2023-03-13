@@ -19,11 +19,3 @@ func New(ctrlSite controllersSite.Service, l logger.Logger) *ServiceImpl {
 		log:                            l,
 	}
 }
-
-// func New(ctrlSite controllersSite.Service, log *log.Logger) *ServiceImpl {
-//	return &ServiceImpl{
-//		ctrlSite:                       ctrlSite,
-//		UnimplementedSiteServiceServer: api.UnimplementedSiteServiceServer{},
-//		log.Logger{}
-//	}
-//}

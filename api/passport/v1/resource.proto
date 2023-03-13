@@ -11,9 +11,6 @@ service ResourceService {
   rpc GetResource (GetResourceRequest) returns (GetResourceResponse){}
   rpc DeleteResource (DeleteResourceRequest) returns (DeleteResourceResponse){}
   rpc ListResource (ListResourceRequest) returns (ListResourceResponse){}
-
-  rpc SetUserAccess (SetUserAccessRequest) returns (SetUserAccessResponse){}
-  rpc DeleteUserAccess (DeleteUserAccessRequest) returns (DeleteUserAccessResponse){}
 }
 
 message Resource {
@@ -50,18 +47,4 @@ message ListResourceRequest {
 
 message ListResourceResponse {
   repeated Resource resource = 1;
-}
-
-message SetUserAccessRequest {
-  string user_id = 1;
-}
-
-message SetUserAccessResponse {
-}
-
-message DeleteUserAccessRequest {
-  string user_id = 1;
-}
-
-message DeleteUserAccessResponse {
 }

@@ -11,4 +11,5 @@ type Service interface {
 	GetUserToken(ctx context.Context, params *GetUserTokenRequest) (*models.Auth, error)
 	DeleteUserToken(ctx context.Context, token string) (err error)
 	CheckUserAccess(ctx context.Context, params *CheckUserAccessRequest) (bool, error)
+	SetUserAccess(ctx context.Context, resourceID string, UserID string) error
 }

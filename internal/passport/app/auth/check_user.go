@@ -3,7 +3,10 @@ package auth
 import (
 	"context"
 	"errors"
+	"regexp"
 
+	"github.com/go-ozzo/ozzo-validation/is"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -13,7 +16,9 @@ import (
 )
 
 func (s *ServiceImpl) CheckUser(ctx context.Context, req *api.CheckUserAccessRequest) (*api.CheckUserAccessResponse, error) {
-	// FIXME: валидация
+	if err := validateCheckUserReq(req); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
 
 	user, err := s.ctrlAuth.GetUserToken(ctx, &controllerAuth.GetUserTokenRequest{
 		Token: &req.Token,
@@ -51,4 +56,21 @@ func (s *ServiceImpl) CheckUser(ctx context.Context, req *api.CheckUserAccessReq
 	}
 
 	return &api.CheckUserAccessResponse{}, nil
+}
+
+func validateCheckUserReq(req *api.CheckUserAccessRequest) error {
+	return validation.Errors{
+		"resource_id": validation.Validate(
+			req.Resource,
+			validation.Required,
+			is.UUIDv4,
+		),
+		"token": validation.Validate(
+			req.Token,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^([0-9]{1,}|[a-z]{1,}|[A-Z]{1,}|[!@#$%&*()-_+=]{1,}){8,255}$"),
+			),
+		),
+	}.Filter()
 }

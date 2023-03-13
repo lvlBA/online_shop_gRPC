@@ -3,12 +3,14 @@ package resource
 import (
 	"context"
 	"errors"
+
 	"github.com/go-ozzo/ozzo-validation/is"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/lvlBA/online_shop/internal/management/controllers"
-	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/lvlBA/online_shop/internal/management/controllers"
+	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
 func (s *ServiceImpl) GetResource(ctx context.Context, req *api.GetResourceRequest) (*api.GetResourceResponse, error) {

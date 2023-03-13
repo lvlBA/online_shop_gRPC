@@ -39,8 +39,6 @@ type Resource interface {
 	GetResource(ctx context.Context, params *GetResourceParams) (*models.Resource, error)
 	DeleteResource(ctx context.Context, id string) error
 	ListResource(ctx context.Context, filter *ListServiceFilter) ([]*models.Resource, error)
-	SetUserAccess(ctx context.Context, id string) error
-	DeleteUserAccess(ctx context.Context, id string) error
 }
 
 type Auth interface {
@@ -50,5 +48,6 @@ type Auth interface {
 
 	CreateUserAccess(ctx context.Context, params *CreateUserAccessParams) (*models.Access, error)
 	DeleteUserAccess(ctx context.Context, params *DeleteUserAccessParams) error
+	SetUserAccess(ctx context.Context, resourceID string, UserID string) error
 	GetUserAccess(ctx context.Context, params *GetUserAccessParams) (*models.Access, error)
 }
