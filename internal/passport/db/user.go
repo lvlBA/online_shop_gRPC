@@ -85,7 +85,6 @@ func (u *UserImpl) GetUser(ctx context.Context, params *GetUserParams) (*models.
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrorNotFound
 		}
-
 		return nil, err
 	}
 

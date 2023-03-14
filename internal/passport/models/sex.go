@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql/driver"
 	"errors"
+	"fmt"
 
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
@@ -23,12 +24,17 @@ func (s Sex) Value() (driver.Value, error) {
 }
 
 func (s *Sex) Scan(src interface{}) error {
-	data, ok := src.(int64)
+	data, ok := src.(string)
 	if !ok {
 		return errors.New("failed to type assertion to int64")
 	}
 
-	*s = Sex(data)
+	value, ok := api.Sex_value[data]
+	if !ok {
+		return fmt.Errorf("unknown data: (%s)", data)
+	}
+
+	*s = Sex(value)
 
 	return nil
 }

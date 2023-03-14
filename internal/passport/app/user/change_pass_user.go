@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"regexp"
 
 	"github.com/go-ozzo/ozzo-validation/is"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -33,5 +34,19 @@ func (s ServiceImpl) ChangePass(ctx context.Context, req *api.ChangePassRequest)
 func validateChangePassUserReq(req *api.ChangePassRequest) error {
 	return validation.Errors{
 		"Id": validation.Validate(req.Id, validation.Required, is.UUIDv4),
+		"pass": validation.Validate(
+			req.OldPass,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^([0-9]{1,}|[a-z]{1,}|[A-Z]{1,}|[!@#$%&*()-_+=]{1,}){8,255}$"),
+			),
+		),
+		"newPass": validation.Validate(
+			req.NewPass,
+			validation.Required,
+			validation.Match(
+				regexp.MustCompile("^([0-9]{1,}|[a-z]{1,}|[A-Z]{1,}|[!@#$%&*()-_+=]{1,}){8,255}$"),
+			),
+		),
 	}.Filter()
 }

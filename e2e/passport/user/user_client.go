@@ -1,4 +1,4 @@
-package passport
+package user
 
 import (
 	"context"

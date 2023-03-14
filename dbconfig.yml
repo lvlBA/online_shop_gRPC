@@ -3,33 +3,3 @@ development:
   datasource: dbname=db user=db password=db sslmode=disable port=5478
   dir: migrations
   table: migrations
-
-development_sites:
-  dialect: postgres
-  datasource: dbname = users user=db password=db sslmode=disable port=5478
-  dir: migrations
-  table: migrations
-
-development_resources:
-  dialect: postgres
-  datasource: dbname = resources user=db password=db sslmode=disable port=5479
-  dir: migrations
-  table: migrations
-
-development_users:
-  dialect: postgres
-  datasource: dbname = users user=db password=db sslmode=disable port=5480
-  dir: migrations
-  table: migrations
-
-development_auth:
-  dialect: postgres
-  datasource: dbname = auth user=db password=db sslmode=disable port=5481
-  dir: migrations
-  table: migrations
-
-development_access:
-  dialect: postgres
-  datasource: dbname = access user=db password=db sslmode=disable port=5482
-  dir: migrations
-  table: migrations

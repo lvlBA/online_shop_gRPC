@@ -7,7 +7,7 @@ CREATE TABLE auth
     user_id    uuid not null REFERENCES users (id),
     token      text NOT NULL,
     created_at timestamp        DEFAULT now(),
-    changed_at timestamp
+    changed_at timestamp NOT NULL
 );
 
 CREATE TABLE access

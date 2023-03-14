@@ -11,7 +11,7 @@ CREATE TABLE users
     login text NOT NULL UNIQUE,
     hash_password text NOT NULL UNIQUE,
     created_at timestamp DEFAULT now(),
-    changed_at timestamp
+    changed_at timestamp DEFAULT current_timestamp
 );
 
 -- +migrate Down
