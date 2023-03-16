@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/doug-martin/goqu/v9"
 	"github.com/lvlBA/online_shop/internal/passport/models"
+	"strings"
 )
 
 const (
@@ -20,7 +21,7 @@ type AuthImpl struct {
 
 type CreateUserTokenParams struct {
 	UserID string
-	Token  string
+	Token  []byte
 }
 
 func (a *AuthImpl) CreateUserAuth(ctx context.Context, params *CreateUserTokenParams) (*models.Auth, error) {
@@ -42,7 +43,7 @@ func (a *AuthImpl) CreateUserAuth(ctx context.Context, params *CreateUserTokenPa
 
 type GetUserAuthParams struct {
 	UserID *string
-	Token  *string
+	Token  []byte
 }
 
 func (p *GetUserAuthParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset, error) {
@@ -50,7 +51,7 @@ func (p *GetUserAuthParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset,
 	case p.UserID != nil:
 		return sd.Where(goqu.Ex{"user_id": *p.UserID}), nil
 	case p.Token != nil:
-		return sd.Where(goqu.Ex{"token": *p.Token}), nil
+		return sd.Where(goqu.Ex{"token": p.Token}), nil
 	default:
 		return nil, errors.New("undefined behavior: user id is not set and token is not set")
 	}
@@ -79,8 +80,9 @@ func (a *AuthImpl) GetUserAuth(ctx context.Context, params *GetUserAuthParams) (
 	return result, nil
 }
 
-func (a *AuthImpl) DeleteUserAuth(ctx context.Context, token string) error {
-	query, _, err := goqu.From(tableNameAuth).Delete().Where(goqu.Ex{"token": token}).ToSQL()
+func (a *AuthImpl) DeleteUserAuth(ctx context.Context, userId string) error {
+	//TODO how to do that throughout transaction
+	query, _, err := goqu.From(tableNameAuth).Delete().Where(goqu.Ex{"user_id": userId}).ToSQL()
 	if err != nil {
 		return err
 	}
@@ -192,8 +194,8 @@ func (a *AuthImpl) GetUserAccess(ctx context.Context, params *GetUserAccessParam
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %w", err)
 	}
-
 	result := &models.Access{}
+
 	if err = a.svc.GetContext(ctx, result, query); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrorNotFound
@@ -205,35 +207,7 @@ func (a *AuthImpl) GetUserAccess(ctx context.Context, params *GetUserAccessParam
 	return result, nil
 }
 
-func (r *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, userID string) error {
-	queryUser, _, err := goqu.From(tableNameUser).Select("*").Where(goqu.Ex{"user_id": userID}).ToSQL()
-	if err != nil {
-		return fmt.Errorf("failed to create query user_id doesn't exists: %w", err)
-	}
-	resultUser := &models.Auth{}
-
-	if err = r.svc.GetContext(ctx, resultUser, queryUser); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return ErrorNotFound
-		}
-
-		return err
-	}
-	queryResource, _, err := goqu.From(tableNameService).Select("*").Where(goqu.Ex{"id": resourceID}).ToSQL()
-	if err != nil {
-		return fmt.Errorf("failed to create query user_id doesn't exists: %w", err)
-	}
-
-	resultResource := &models.Auth{}
-
-	if err = r.svc.GetContext(ctx, resultResource, queryResource); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return ErrorNotFound
-		}
-
-		return err
-	}
-
+func (a *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, userID string) error {
 	model := &models.Access{
 		Meta:       models.Meta{},
 		UserID:     userID,
@@ -241,8 +215,11 @@ func (r *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, userID 
 	}
 	model.UpdateMeta()
 
-	_, err = r.svc.create(ctx, tableNameAccess, model)
-	if err != nil {
+	if _, err := a.svc.create(ctx, tableNameAccess, model); err != nil {
+		if strings.Contains(err.Error(), "FIXME") {
+			return ErrorNotFound
+		}
+
 		return fmt.Errorf("failed to create new model: %w", err)
 	}
 

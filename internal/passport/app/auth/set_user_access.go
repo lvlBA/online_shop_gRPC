@@ -13,15 +13,15 @@ import (
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
-func (s *ServiceImpl) SetUserAccess(ctx context.Context,
-	req *api.SetUserAccessRequest) (*api.SetUserAccessResponse, error) {
+func (s *ServiceImpl) SetUserAccess(
+	ctx context.Context, req *api.SetUserAccessRequest) (*api.SetUserAccessResponse, error) {
 	if err := validateSetUserAccessReq(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := s.ctrlAuth.SetUserAccess(ctx, req.UserId, req.Resource); err != nil {
+	if err := s.ctrlAuth.SetUserAccess(ctx, req.ResourceId, req.UserId); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
-			return nil, status.Error(codes.NotFound, "Not found")
+			return nil, status.Error(codes.NotFound, "not found")
 		}
 		s.log.Error(ctx, "failed to Set User Access", err, "request", req)
 
@@ -33,6 +33,7 @@ func (s *ServiceImpl) SetUserAccess(ctx context.Context,
 
 func validateSetUserAccessReq(req *api.SetUserAccessRequest) error {
 	return validation.Errors{
-		"Id": validation.Validate(req.UserId, validation.Required, is.UUIDv4),
+		"user_id":     validation.Validate(req.UserId, validation.Required, is.UUIDv4),
+		"resource_id": validation.Validate(req.ResourceId, validation.Required, is.UUIDv4),
 	}.Filter()
 }

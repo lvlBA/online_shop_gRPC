@@ -3,8 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
-	"regexp"
-
+	"fmt"
 	"github.com/go-ozzo/ozzo-validation/is"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
@@ -15,13 +14,13 @@ import (
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
-func (s *ServiceImpl) CheckUser(ctx context.Context, req *api.CheckUserAccessRequest) (*api.CheckUserAccessResponse, error) {
+func (s *ServiceImpl) CheckUserAccess(ctx context.Context, req *api.CheckUserAccessRequest) (*api.CheckUserAccessResponse, error) {
 	if err := validateCheckUserReq(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	user, err := s.ctrlAuth.GetUserToken(ctx, &controllerAuth.GetUserTokenRequest{
-		Token: &req.Token,
+		Token: req.Token,
 	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
@@ -32,7 +31,7 @@ func (s *ServiceImpl) CheckUser(ctx context.Context, req *api.CheckUserAccessReq
 		return nil, status.Error(codes.Internal, "error check user")
 	}
 
-	resource, err := s.ctrlResource.GetResourceByName(ctx, req.Resource)
+	resource, err := s.ctrlResource.GetResourceByID(ctx, req.ResourceId)
 	if err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "not found")
@@ -43,16 +42,18 @@ func (s *ServiceImpl) CheckUser(ctx context.Context, req *api.CheckUserAccessReq
 	}
 
 	ok, err := s.ctrlAuth.CheckUserAccess(ctx, &controllerAuth.CheckUserAccessRequest{
-		UserID:     user.ID,
+		UserID:     user.UserID,
 		ResourceID: resource.ID,
 	})
+	fmt.Println(user.UserID)
+	fmt.Println(resource.ID)
 	if err != nil {
 		s.log.Error(ctx, "failed to check user access", err, "request", req)
 		return nil, status.Error(codes.Internal, "error check user")
 	}
-
+	fmt.Println(ok)
 	if !ok {
-		return nil, status.Error(codes.Unauthenticated, "not auth")
+		return nil, status.Error(codes.Unauthenticated, "not auth2")
 	}
 
 	return &api.CheckUserAccessResponse{}, nil
@@ -61,16 +62,13 @@ func (s *ServiceImpl) CheckUser(ctx context.Context, req *api.CheckUserAccessReq
 func validateCheckUserReq(req *api.CheckUserAccessRequest) error {
 	return validation.Errors{
 		"resource_id": validation.Validate(
-			req.Resource,
+			req.ResourceId,
 			validation.Required,
 			is.UUIDv4,
 		),
 		"token": validation.Validate(
 			req.Token,
 			validation.Required,
-			validation.Match(
-				regexp.MustCompile("^([0-9]{1,}|[a-z]{1,}|[A-Z]{1,}|[!@#$%&*()-_+=]{1,}){8,255}$"),
-			),
 		),
 	}.Filter()
 }

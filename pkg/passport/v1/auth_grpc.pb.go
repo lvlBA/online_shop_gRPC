@@ -26,6 +26,7 @@ type AuthServiceClient interface {
 	SetUserAccess(ctx context.Context, in *SetUserAccessRequest, opts ...grpc.CallOption) (*SetUserAccessResponse, error)
 	DeleteUserToken(ctx context.Context, in *DeleteUserTokenRequest, opts ...grpc.CallOption) (*DeleteUserTokenResponse, error)
 	CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, opts ...grpc.CallOption) (*CheckUserAccessResponse, error)
+	DeleteUserAccess(ctx context.Context, in *DeleteUserAccessRequest, opts ...grpc.CallOption) (*DeleteUserAccessResponse, error)
 }
 
 type authServiceClient struct {
@@ -72,6 +73,15 @@ func (c *authServiceClient) CheckUserAccess(ctx context.Context, in *CheckUserAc
 	return out, nil
 }
 
+func (c *authServiceClient) DeleteUserAccess(ctx context.Context, in *DeleteUserAccessRequest, opts ...grpc.CallOption) (*DeleteUserAccessResponse, error) {
+	out := new(DeleteUserAccessResponse)
+	err := c.cc.Invoke(ctx, "/online_shop.passport.v1.AuthService/DeleteUserAccess", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type AuthServiceServer interface {
 	SetUserAccess(context.Context, *SetUserAccessRequest) (*SetUserAccessResponse, error)
 	DeleteUserToken(context.Context, *DeleteUserTokenRequest) (*DeleteUserTokenResponse, error)
 	CheckUserAccess(context.Context, *CheckUserAccessRequest) (*CheckUserAccessResponse, error)
+	DeleteUserAccess(context.Context, *DeleteUserAccessRequest) (*DeleteUserAccessResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedAuthServiceServer) DeleteUserToken(context.Context, *DeleteUs
 }
 func (UnimplementedAuthServiceServer) CheckUserAccess(context.Context, *CheckUserAccessRequest) (*CheckUserAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckUserAccess not implemented")
+}
+func (UnimplementedAuthServiceServer) DeleteUserAccess(context.Context, *DeleteUserAccessRequest) (*DeleteUserAccessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserAccess not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -184,6 +198,24 @@ func _AuthService_CheckUserAccess_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_DeleteUserAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).DeleteUserAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/online_shop.passport.v1.AuthService/DeleteUserAccess",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).DeleteUserAccess(ctx, req.(*DeleteUserAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckUserAccess",
 			Handler:    _AuthService_CheckUserAccess_Handler,
+		},
+		{
+			MethodName: "DeleteUserAccess",
+			Handler:    _AuthService_DeleteUserAccess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

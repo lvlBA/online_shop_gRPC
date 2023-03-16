@@ -15,10 +15,13 @@ import (
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
-func (s *ServiceImpl) CreateResource(ctx context.Context,
-	req *api.CreateResourceRequest) (*api.CreateResourceResponse, error) {
+func (s *ServiceImpl) CreateResource(
+	ctx context.Context, req *api.CreateResourceRequest) (*api.CreateResourceResponse, error) {
+	if err := validateCreateResource(req); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
 
-	resource, err := s.ctrlService.CreateResource(ctx, &controllersresource.CreateServiceParams{
+	resource, err := s.ctrlService.CreateResource(ctx, &controllersresource.CreateResourceParams{
 		Urn: req.Urn,
 	})
 	if err != nil {
@@ -30,13 +33,7 @@ func (s *ServiceImpl) CreateResource(ctx context.Context,
 		return nil, status.Error(codes.Internal, "error create Resource")
 	}
 
-	if err := validateCreateResource(req); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	return &api.CreateResourceResponse{
-		Resource: adaptResourceToApi(resource),
-	}, nil
+	return &api.CreateResourceResponse{Resource: adaptResourceToApi(resource)}, nil
 }
 
 func adaptResourceToApi(model *models.Resource) *api.Resource {

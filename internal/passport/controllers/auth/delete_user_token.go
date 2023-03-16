@@ -6,6 +6,6 @@ import (
 	"github.com/lvlBA/online_shop/internal/management/controllers"
 )
 
-func (s *ServiceImpl) DeleteUserToken(ctx context.Context, token string) (err error) {
-	return controllers.AdaptingErrorDB(s.db.Auth().DeleteUserAuth(ctx, token))
+func (s *ServiceImpl) DeleteUserToken(ctx context.Context, userId string) (err error) {
+	return controllers.AdaptingErrorDB(s.db.Auth().DeleteUserAuth(ctx, userId))
 }

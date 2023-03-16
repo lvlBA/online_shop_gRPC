@@ -86,7 +86,7 @@ func Test_sites(t *testing.T) {
 		t.Fatalf("failed to create site: %s", err)
 	}
 
-	t.Run("Create_success", func(t *testing.T) {
+	t.Run("create_success", func(t *testing.T) {
 		// define
 		siteName := "test_site1"
 		want := &api.CreateSideResponse{Site: &api.Site{
@@ -111,7 +111,7 @@ func Test_sites(t *testing.T) {
 			invalidFatal(t, want, got)
 		}
 	})
-	t.Run("Create_failed", func(t *testing.T) {
+	t.Run("create_failed", func(t *testing.T) {
 		t.Run("site exists", func(t *testing.T) {
 			siteName := "test_site1"
 			resp, err := cli.CreateSite(ctx, &api.CreateSideRequest{
@@ -156,7 +156,7 @@ func Test_sites(t *testing.T) {
 			})
 		})
 	})
-	t.Run("Get_Success", func(t *testing.T) {
+	t.Run("get_Success", func(t *testing.T) {
 		// define
 		site, err := cli.CreateSite(ctx, &api.CreateSideRequest{
 			Name: "test",
@@ -184,16 +184,16 @@ func Test_sites(t *testing.T) {
 			}
 		}()
 	})
-	t.Run("Get_Failed", func(t *testing.T) {
-		t.Run("Site_doesn't exist", func(t *testing.T) {
-			t.Run("Site_is_bad", func(t *testing.T) {
+	t.Run("get_Failed", func(t *testing.T) {
+		t.Run("site_doesn't exist", func(t *testing.T) {
+			t.Run("site_is_bad", func(t *testing.T) {
 				resp, err := cli.GetSite(ctx, &api.GetSiteRequest{Id: "123456"})
 
 				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
 					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				assert.Nil(t, resp)
 			})
-			t.Run("Site_is_empty", func(t *testing.T) {
+			t.Run("site_is_empty", func(t *testing.T) {
 				resp, err := cli.GetSite(ctx, &api.GetSiteRequest{Id: ""})
 
 				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
@@ -203,7 +203,7 @@ func Test_sites(t *testing.T) {
 		})
 
 	})
-	t.Run("Delete_Success", func(t *testing.T) {
+	t.Run("delete_Success", func(t *testing.T) {
 		// define
 
 		site, err := cli.CreateSite(ctx, &api.CreateSideRequest{
@@ -222,8 +222,8 @@ func Test_sites(t *testing.T) {
 		assert.Nil(t, err)
 
 	})
-	t.Run("Delete_Failed", func(t *testing.T) {
-		t.Run("Site_doesn't exist", func(t *testing.T) {
+	t.Run("delete_Failed", func(t *testing.T) {
+		t.Run("site_doesn't exist", func(t *testing.T) {
 			t.Run("Site_is_bad", func(t *testing.T) {
 				resp, err := cli.DeleteSite(ctx, &api.DeleteSiteRequest{Id: "123456"})
 
@@ -241,8 +241,8 @@ func Test_sites(t *testing.T) {
 		})
 
 	})
-	t.Run("ListSite_Pagination", func(t *testing.T) {
-		t.Run("Success_pagination", func(t *testing.T) {
+	t.Run("listSite_Pagination", func(t *testing.T) {
+		t.Run("success_pagination", func(t *testing.T) {
 			t.Run("without pagination", func(t *testing.T) {
 				// define
 				site, err := cli.CreateSite(ctx, &api.CreateSideRequest{

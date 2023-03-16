@@ -18,17 +18,17 @@ type ServiceImpl struct {
 }
 
 type Config struct {
-	log          logger.Logger
-	ctrlAuth     controllerAuth.Service
-	ctrlResource controllerResource.Service
-	ctrlUser     controllerUser.Service
+	Log          logger.Logger
+	CtrlAuth     controllerAuth.Service
+	CtrlResource controllerResource.Service
+	CtrlUser     controllerUser.Service
 }
 
 func New(cfg *Config) api.AuthServiceServer {
 	return &ServiceImpl{
-		ctrlAuth:     cfg.ctrlAuth,
-		ctrlResource: cfg.ctrlResource,
-		ctrlUser:     cfg.ctrlUser,
-		log:          cfg.log,
+		ctrlAuth:     cfg.CtrlAuth,
+		ctrlResource: cfg.CtrlResource,
+		ctrlUser:     cfg.CtrlUser,
+		log:          cfg.Log,
 	}
 }

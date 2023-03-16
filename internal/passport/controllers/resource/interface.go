@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	CreateResource(ctx context.Context, params *CreateServiceParams) (*models.Resource, error)
+	CreateResource(ctx context.Context, params *CreateResourceParams) (*models.Resource, error)
 	GetResourceByID(ctx context.Context, id string) (*models.Resource, error)
 	GetResourceByName(ctx context.Context, name string) (*models.Resource, error)
 	DeleteResource(ctx context.Context, id string) error

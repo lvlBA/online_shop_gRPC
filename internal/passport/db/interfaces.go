@@ -35,7 +35,7 @@ type service interface {
 }
 
 type Resource interface {
-	CreateResource(ctx context.Context, params *CreateServiceParams) (*models.Resource, error)
+	CreateResource(ctx context.Context, params *CreateResourceParams) (*models.Resource, error)
 	GetResource(ctx context.Context, params *GetResourceParams) (*models.Resource, error)
 	DeleteResource(ctx context.Context, id string) error
 	ListResource(ctx context.Context, filter *ListServiceFilter) ([]*models.Resource, error)
@@ -44,7 +44,7 @@ type Resource interface {
 type Auth interface {
 	CreateUserAuth(ctx context.Context, params *CreateUserTokenParams) (*models.Auth, error)
 	GetUserAuth(ctx context.Context, params *GetUserAuthParams) (*models.Auth, error)
-	DeleteUserAuth(ctx context.Context, token string) error
+	DeleteUserAuth(ctx context.Context, userId string) error
 
 	CreateUserAccess(ctx context.Context, params *CreateUserAccessParams) (*models.Access, error)
 	DeleteUserAccess(ctx context.Context, params *DeleteUserAccessParams) error

@@ -12,11 +12,10 @@ import (
 	utilspagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
 )
 
-const tableNameService = "resources"
+const tableNameResource = "resources"
 
-type CreateServiceParams struct {
-	Urn    string
-	Access bool
+type CreateResourceParams struct {
+	Urn string
 }
 
 type ResourceImpl struct {
@@ -35,15 +34,14 @@ func (f *ListServiceFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset {
 	return ds
 }
 
-func (r *ResourceImpl) CreateResource(ctx context.Context, params *CreateServiceParams) (*models.Resource, error) {
+func (r *ResourceImpl) CreateResource(ctx context.Context, params *CreateResourceParams) (*models.Resource, error) {
 	model := &models.Resource{
-		Meta:   models.Meta{},
-		Urn:    params.Urn,
-		Access: params.Access,
+		Meta: models.Meta{},
+		Urn:  params.Urn,
 	}
 	model.UpdateMeta()
 
-	id, err := r.svc.create(ctx, tableNameService, model)
+	id, err := r.svc.create(ctx, tableNameResource, model)
 	if err != nil {
 		return nil, err
 	}
@@ -62,14 +60,14 @@ func (p *GetResourceParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset,
 	case p.ID != nil:
 		return sd.Where(goqu.Ex{"id": *p.ID}), nil
 	case p.Resource != nil:
-		return sd.Where(goqu.Ex{"resource": *p.Resource}), nil
+		return sd.Where(goqu.Ex{"resources": *p.Resource}), nil
 	default:
 		return nil, errors.New("undefined behavior: id is not set and resource is not set")
 	}
 }
 
 func (r *ResourceImpl) GetResource(ctx context.Context, params *GetResourceParams) (*models.Resource, error) {
-	sd, err := params.filter(goqu.From(tableNameService).Select("*"))
+	sd, err := params.filter(goqu.From(tableNameResource).Select("*"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create filter: %w", err)
 	}
@@ -92,11 +90,11 @@ func (r *ResourceImpl) GetResource(ctx context.Context, params *GetResourceParam
 }
 
 func (r *ResourceImpl) DeleteResource(ctx context.Context, id string) error {
-	return r.svc.delete(ctx, tableNameService, id)
+	return r.svc.delete(ctx, tableNameResource, id)
 }
 
 func (r *ResourceImpl) ListResource(ctx context.Context, filter *ListServiceFilter) ([]*models.Resource, error) {
-	ds := goqu.From(tableNameService).Select("*")
+	ds := goqu.From(tableNameResource).Select("*")
 	ds = filter.Filter(ds)
 	query, _, err := ds.ToSQL()
 	if err != nil {

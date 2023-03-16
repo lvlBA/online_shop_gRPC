@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"testing"
 
 	"github.com/caarlos0/env/v7"
+	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
@@ -99,7 +99,7 @@ func Test_User(t *testing.T) {
 		t.Fatalf("failed to create user: %s", err)
 	}
 
-	t.Run("Create_user_success", func(t *testing.T) {
+	t.Run("create_user_success", func(t *testing.T) {
 		// define
 
 		want := &api.CreateUserResponse{User: &api.User{
@@ -110,7 +110,6 @@ func Test_User(t *testing.T) {
 			Sex:       api.Sex_SexMale,
 			Login:     login,
 		}}
-
 		// check
 
 		got, err := cli.CreateUser(ctx, &api.CreateUserRequest{
@@ -135,8 +134,8 @@ func Test_User(t *testing.T) {
 			invalidFatal(t, want, got)
 		}
 	})
-	t.Run("Create_user_failed", func(t *testing.T) {
-		t.Run("user exists", func(t *testing.T) {
+	t.Run("create_user_failed", func(t *testing.T) {
+		t.Run("user_exists", func(t *testing.T) {
 			// define
 
 			resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
@@ -171,7 +170,7 @@ func Test_User(t *testing.T) {
 						t.Fatal(err)
 					}
 				}()
-				t.Fatalf("double site creation")
+				t.Fatalf("double user creation")
 			}
 
 			assert.Equalf(t, status.Code(err), codes.AlreadyExists,
@@ -180,7 +179,9 @@ func Test_User(t *testing.T) {
 		})
 		t.Run("empty", func(t *testing.T) {
 
-			t.Run("firstName", func(t *testing.T) {
+			t.Run("first_Name", func(t *testing.T) {
+				// check
+
 				resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: "",
 					LastName:  lastName,
@@ -194,7 +195,9 @@ func Test_User(t *testing.T) {
 					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				assert.Nil(t, resp)
 			})
-			t.Run("lastName", func(t *testing.T) {
+			t.Run("last_Name", func(t *testing.T) {
+				// check
+
 				resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: firstName,
 					LastName:  "",
@@ -209,6 +212,8 @@ func Test_User(t *testing.T) {
 				assert.Nil(t, resp)
 			})
 			t.Run("age", func(t *testing.T) {
+				// check
+
 				resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: firstName,
 					LastName:  lastName,
@@ -223,6 +228,8 @@ func Test_User(t *testing.T) {
 				assert.Nil(t, resp)
 			})
 			t.Run("login", func(t *testing.T) {
+				// check
+
 				resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: firstName,
 					LastName:  lastName,
@@ -237,6 +244,8 @@ func Test_User(t *testing.T) {
 				assert.Nil(t, resp)
 			})
 			t.Run("pass", func(t *testing.T) {
+				// check
+
 				resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: firstName,
 					LastName:  lastName,
@@ -251,6 +260,8 @@ func Test_User(t *testing.T) {
 				assert.Nil(t, resp)
 			})
 			t.Run("sex", func(t *testing.T) {
+				// check
+
 				resp, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: firstName,
 					LastName:  lastName,
@@ -264,11 +275,11 @@ func Test_User(t *testing.T) {
 					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				assert.Nil(t, resp)
 			})
-
 		})
 	})
-	t.Run("Get_Success", func(t *testing.T) {
+	t.Run("get_success", func(t *testing.T) {
 		// define
+
 		user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 			FirstName: firstName,
 			LastName:  lastName,
@@ -288,8 +299,8 @@ func Test_User(t *testing.T) {
 			Sex:       api.Sex_SexMale,
 			Login:     login,
 		}}
-
 		// check
+
 		got, err := cli.GetUser(ctx, &api.GetUserRequest{Id: user.User.Id})
 
 		if err != nil {
@@ -304,16 +315,20 @@ func Test_User(t *testing.T) {
 			}
 		}()
 	})
-	t.Run("Get_Failed", func(t *testing.T) {
-		t.Run("User_doesn't exist", func(t *testing.T) {
-			t.Run("User_is_bad", func(t *testing.T) {
+	t.Run("get_failed", func(t *testing.T) {
+		t.Run("user_doesn't_exist", func(t *testing.T) {
+			t.Run("user_is_bad", func(t *testing.T) {
+				// check
+
 				resp, err := cli.GetUser(ctx, &api.GetUserRequest{Id: "123456"})
 
 				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
 					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				assert.Nil(t, resp)
 			})
-			t.Run("User_is_empty", func(t *testing.T) {
+			t.Run("user_is_empty", func(t *testing.T) {
+				// check
+
 				resp, err := cli.GetUser(ctx, &api.GetUserRequest{Id: ""})
 
 				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
@@ -321,9 +336,8 @@ func Test_User(t *testing.T) {
 				assert.Nil(t, resp)
 			})
 		})
-
 	})
-	t.Run("Delete_Success", func(t *testing.T) {
+	t.Run("delete_success", func(t *testing.T) {
 		// define
 
 		user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
@@ -339,6 +353,7 @@ func Test_User(t *testing.T) {
 		}
 
 		// check
+
 		_, err = cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id})
 
 		if err != nil {
@@ -347,16 +362,20 @@ func Test_User(t *testing.T) {
 		assert.Nil(t, err)
 
 	})
-	t.Run("Delete_Failed", func(t *testing.T) {
-		t.Run("User_doesn't exist", func(t *testing.T) {
-			t.Run("User_is_bad", func(t *testing.T) {
+	t.Run("delete_failed", func(t *testing.T) {
+		t.Run("User_doesn't_exist", func(t *testing.T) {
+			t.Run("user_is_bad", func(t *testing.T) {
+				// check
+
 				resp, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: "123456"})
 
 				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
 					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				assert.Nil(t, resp)
 			})
-			t.Run("UserId_is_empty", func(t *testing.T) {
+			t.Run("userId_is_empty", func(t *testing.T) {
+				// check
+
 				resp, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: ""})
 
 				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
@@ -364,12 +383,12 @@ func Test_User(t *testing.T) {
 				assert.Nil(t, resp)
 			})
 		})
-
 	})
-	t.Run("ListUser_Pagination", func(t *testing.T) {
-		t.Run("Success_pagination", func(t *testing.T) {
-			t.Run("without pagination", func(t *testing.T) {
+	t.Run("list_user_pagination", func(t *testing.T) {
+		t.Run("success_pagination", func(t *testing.T) {
+			t.Run("without_pagination", func(t *testing.T) {
 				// define
+
 				user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 					FirstName: firstName,
 					LastName:  lastName,
@@ -393,6 +412,7 @@ func Test_User(t *testing.T) {
 				}}
 
 				// check
+
 				got, err := cli.ListUsers(ctx, &api.ListUsersRequest{Pagination: nil})
 				if err != nil {
 					t.Fatal(err)
@@ -408,8 +428,9 @@ func Test_User(t *testing.T) {
 					}
 				}()
 			})
-			t.Run("with filter", func(t *testing.T) {
+			t.Run("with_filter", func(t *testing.T) {
 				// define
+
 				exists := make([]*api.User, 0, 20)
 				for i := 0; i < len(exists); i++ {
 					got, err := cli.CreateUser(ctx, &api.CreateUserRequest{
@@ -430,8 +451,8 @@ func Test_User(t *testing.T) {
 						}
 					}()
 				}
-
 				// checks
+
 				for limit := 0; limit <= len(exists)+1; limit++ {
 					t.Run(fmt.Sprintf("limit %d", limit), func(t *testing.T) {
 						got, err := cli.ListUsers(ctx, &api.ListUsersRequest{
@@ -448,16 +469,16 @@ func Test_User(t *testing.T) {
 						case limit < len(exists) && len(got.Users) != limit:
 							t.Fatalf(" limit < len(exists) && len(got.Users) != limit")
 						case !notLineCompare(exists, got.Users):
-							t.Fatalf("!notLineCompare(exists, got.Sites)")
+							t.Fatalf("!notLineCompare(exists, got.Users)")
 						}
 					})
 				}
 			})
 		})
-
 	})
-	t.Run("ChangeUser_pass_success", func(t *testing.T) {
+	t.Run("change_user_pass_success", func(t *testing.T) {
 		// define
+
 		user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 			FirstName: firstName,
 			LastName:  lastName,
@@ -469,6 +490,8 @@ func Test_User(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		// check
+
 		refreshPass := "Ae11223344!"
 		_, err = cli.ChangePass(ctx, &api.ChangePassRequest{
 			Id:      user.User.Id,
@@ -485,9 +508,10 @@ func Test_User(t *testing.T) {
 			}
 		}()
 	})
-	t.Run("ChangePass_failed", func(t *testing.T) {
-		t.Run("Wrong_userId", func(t *testing.T) {
+	t.Run("change_pass_failed", func(t *testing.T) {
+		t.Run("wrong_user_id", func(t *testing.T) {
 			// define
+
 			user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 				FirstName: firstName,
 				LastName:  lastName,
@@ -499,6 +523,8 @@ func Test_User(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			// check
+
 			refreshPass := "Ae11223344!"
 			resp, err := cli.ChangePass(ctx, &api.ChangePassRequest{
 				Id:      "",
@@ -518,8 +544,9 @@ func Test_User(t *testing.T) {
 				}
 			}()
 		})
-		t.Run("Wrong_Pass", func(t *testing.T) {
+		t.Run("wrong_pass", func(t *testing.T) {
 			// define
+
 			user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 				FirstName: firstName,
 				LastName:  lastName,
@@ -531,6 +558,9 @@ func Test_User(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+
+			// check
+
 			refreshPass := "Ae11223344!"
 			resp, err := cli.ChangePass(ctx, &api.ChangePassRequest{
 				Id:      user.User.Id,
@@ -550,8 +580,9 @@ func Test_User(t *testing.T) {
 				}
 			}()
 		})
-		t.Run("Empty_2nd_pass", func(t *testing.T) {
+		t.Run("empty_2nd_pass", func(t *testing.T) {
 			// define
+
 			user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
 				FirstName: firstName,
 				LastName:  lastName,
@@ -563,6 +594,8 @@ func Test_User(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
+			// check
+
 			_, err = cli.ChangePass(ctx, &api.ChangePassRequest{
 				Id:      user.User.Id,
 				OldPass: pass,
@@ -573,7 +606,6 @@ func Test_User(t *testing.T) {
 			}
 			assert.Equalf(t, status.Code(err), codes.InvalidArgument,
 				"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
-			//assert.Nil(t, resp)
 
 			defer func() {
 				if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {

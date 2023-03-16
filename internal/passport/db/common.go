@@ -17,7 +17,6 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	if err != nil {
 		return "", fmt.Errorf("failed to create query: %w", err)
 	}
-
 	var id string
 
 	if err = s.DB.QueryRowContext(ctx, query).Scan(&id); err != nil {

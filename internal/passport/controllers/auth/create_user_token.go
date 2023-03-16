@@ -41,14 +41,14 @@ func (s *ServiceImpl) CreateUserToken(ctx context.Context, params *CreateUserTok
 	return auth, nil
 }
 
-func createToken() (string, error) {
+func createToken() ([]byte, error) {
 	id := uuid.New()
 	b, err := id.MarshalBinary()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	token := sha512.Sum512(b)
 
-	return string(token[:]), nil
+	return token[:], nil
 }

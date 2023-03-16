@@ -5,9 +5,9 @@ CREATE TABLE auth
 (
     id         uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id    uuid not null REFERENCES users (id),
-    token      text NOT NULL,
+    token      varchar NOT NULL,
     created_at timestamp        DEFAULT now(),
-    changed_at timestamp NOT NULL
+    changed_at timestamp DEFAULT current_timestamp
 );
 
 CREATE TABLE access
@@ -16,7 +16,7 @@ CREATE TABLE access
     user_id     uuid not null REFERENCES users (id),
     resource_id uuid not null REFERENCES resources (id),
     created_at  timestamp        DEFAULT now(),
-    changed_at  timestamp
+    changed_at timestamp DEFAULT current_timestamp
 );
 
 
