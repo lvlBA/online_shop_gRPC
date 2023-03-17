@@ -21,7 +21,7 @@ const (
 	urn       = "Ae112233sdkforNothing"
 )
 
-func Test_resource(t *testing.T) {
+func Test_auth(t *testing.T) {
 	ctx := context.Background()
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {

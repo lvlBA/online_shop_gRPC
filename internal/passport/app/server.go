@@ -1,12 +1,14 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc/keepalive"
 
+	gracefulshutdown "github.com/lvlBA/online_shop/internal/graceful_shutdown"
 	appAuth "github.com/lvlBA/online_shop/internal/passport/app/auth"
 	appResource "github.com/lvlBA/online_shop/internal/passport/app/resource"
 	appUser "github.com/lvlBA/online_shop/internal/passport/app/user"
@@ -57,13 +59,22 @@ func Run(cfg *Config) error {
 		CtrlUser:     userCtrl,
 	})
 
-	grpcSvc := cfg.getGrpcServer()
+	gs := gracefulshutdown.New(&gracefulshutdown.Config{
+		Ctx:           context.Background(),
+		Log:           log,
+		Stop:          nil,
+		StopWithError: nil,
+	})
+	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor)
+	gs.AddStop(grpcSvc.Stop)
 	api.RegisterUserServiceServer(grpcSvc, userApp)
 	api.RegisterResourceServiceServer(grpcSvc, resourceApp)
 	api.RegisterAuthServiceServer(grpcSvc, authApp)
+	go gs.Observe()
 	if err = grpcSvc.Serve(grpcListener); err != nil {
-		return fmt.Errorf("failed to start service: %w", err)
+		return fmt.Errorf("failed to start server: %w", err)
 	}
+	log.Info(gs.GetContext(), "service finished")
 
 	return nil
 }

@@ -30,8 +30,12 @@ func (c *Config) getGrpcListener() (net.Listener, error) {
 	return net.Listen("tcp", c.GrpcAddr)
 }
 
-func (c *Config) getGrpcServer() *grpc.Server {
-	return grpc.NewServer(
-		grpc.KeepaliveParams(keepAliveParams),
-	)
+func (c *Config) getGrpcServer(inters ...grpc.UnaryServerInterceptor) *grpc.Server {
+	options := make([]grpc.ServerOption, 0, len(inters)+1)
+	options = append(options, grpc.KeepaliveParams(keepAliveParams))
+	for i := range inters {
+		options = append(options, grpc.UnaryInterceptor(inters[i]))
+	}
+
+	return grpc.NewServer(options...)
 }

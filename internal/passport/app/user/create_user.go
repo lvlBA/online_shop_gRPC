@@ -3,11 +3,10 @@ package user
 import (
 	"context"
 	"errors"
-	"regexp"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"regexp"
 
 	"github.com/lvlBA/online_shop/internal/management/controllers"
 	controllersUser "github.com/lvlBA/online_shop/internal/passport/controllers/user"
@@ -38,7 +37,6 @@ func (s ServiceImpl) CreateUser(ctx context.Context, req *api.CreateUserRequest)
 	}
 
 	return &api.CreateUserResponse{
-
 		User: adaptUserToApi(user),
 	}, nil
 }
