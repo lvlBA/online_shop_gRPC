@@ -2,10 +2,9 @@ syntax = "proto3";
 
 package online_shop.management.v1;
 
-import "pagination.proto";
+import "pagination_management.proto";
 
 option go_package = "github.com/lvlBA/online_shop/management;management";
-
 
 service SiteService {
   // CreateSite - implements (this is a comment for public API)

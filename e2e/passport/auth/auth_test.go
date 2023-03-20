@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"testing"
@@ -28,7 +30,11 @@ func Test_auth(t *testing.T) {
 		t.Fatalf("failed to parse config: %s", err)
 	}
 
-	cli, err := New(ctx, cfg)
+	intrUserMeta := grpcinterceptors.NewSetUserMeta()
+
+	cli, err := passportclient.New(ctx, &passportclient.Config{
+		Addr: cfg.Addr,
+	}, intrUserMeta.GrpcInterceptor)
 	if err != nil {
 		t.Fatalf("failed to create auth: %s", err)
 	}
@@ -79,6 +85,7 @@ func Test_auth(t *testing.T) {
 			}
 		}()
 	})
+
 	t.Run("set_user_access_failed", func(t *testing.T) {
 		t.Run("empty", func(t *testing.T) {
 			t.Run("userId", func(t *testing.T) {
@@ -169,6 +176,7 @@ func Test_auth(t *testing.T) {
 			})
 		})
 	})
+
 	t.Run("delete_user_access_success", func(t *testing.T) {
 		// define
 		user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
@@ -215,6 +223,7 @@ func Test_auth(t *testing.T) {
 		assert.Nil(t, err)
 
 	})
+
 	t.Run("delete_user_access_failed", func(t *testing.T) {
 		t.Run("empty", func(t *testing.T) {
 			t.Run("userId", func(t *testing.T) {
@@ -281,6 +290,7 @@ func Test_auth(t *testing.T) {
 			})
 		})
 	})
+
 	t.Run("get_user_token_success", func(t *testing.T) {
 		// define
 
@@ -318,6 +328,7 @@ func Test_auth(t *testing.T) {
 			}
 		}()
 	})
+
 	t.Run("get_user_token_failed", func(t *testing.T) {
 		t.Run("empty", func(t *testing.T) {
 			t.Run("userId", func(t *testing.T) {
@@ -395,293 +406,282 @@ func Test_auth(t *testing.T) {
 			})
 		})
 	})
-	t.Run("check_user_access_success", func(t *testing.T) {
-		// define
 
-		user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
-			FirstName: firstName,
-			LastName:  lastName,
-			Age:       uint64(age),
-			Sex:       api.Sex_SexMale,
-			Login:     login,
-			Pass:      pass,
-		})
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer func() {
-			if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+	t.Run("check_user_access", func(t *testing.T) {
+
+		t.Run("success", func(t *testing.T) {
+			// define
+
+			user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
+				FirstName: firstName,
+				LastName:  lastName,
+				Age:       uint64(age),
+				Sex:       api.Sex_SexMale,
+				Login:     login,
+				Pass:      pass,
+			})
+			if err != nil {
 				t.Fatal(err)
 			}
-		}()
+			defer func() {
+				if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+					t.Fatal(err)
+				}
+			}()
+			ctx = context.WithValue(ctx, "x-request-id", user.User.Login)
 
-		token, err := cli.GetUserToken(ctx, &api.GetUserTokenRequest{
-			Login:    user.User.Login,
-			Password: pass,
-		})
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer func() {
-			if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
+			token, err := cli.GetUserToken(ctx, &api.GetUserTokenRequest{
 				Login:    user.User.Login,
 				Password: pass,
-			}); err != nil {
+			})
+			if err != nil {
 				t.Fatal(err)
 			}
-		}()
+			defer func() {
+				if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
+					Login:    user.User.Login,
+					Password: pass,
+				}); err != nil {
+					t.Fatal(err)
+				}
+			}()
+			ctx = context.WithValue(ctx, "token", token.Token)
 
-		resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer func() {
-			if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+			resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
+			if err != nil {
 				t.Fatal(err)
 			}
-		}()
+			defer func() {
+				if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+					t.Fatal(err)
+				}
+			}()
 
-		_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
-			UserId:     user.User.Id,
-			ResourceId: resource.Resource.Id,
-		})
-		assert.Nil(t, err)
-		defer func() {
-			if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+			_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
 				UserId:     user.User.Id,
 				ResourceId: resource.Resource.Id,
-			}); err != nil {
+			})
+			if err != nil {
 				t.Fatal(err)
 			}
-		}()
-		// check
+			defer func() {
+				if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+					UserId:     user.User.Id,
+					ResourceId: resource.Resource.Id,
+				}); err != nil {
+					t.Fatal(err)
+				}
+			}()
 
-		_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-			ResourceId: resource.Resource.Id,
-			Token:      token.Token,
+			// check
+			_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
+				ResourceId: resource.Resource.Id,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
 		})
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Nil(t, err)
-	})
-	t.Run("check_user_access_failed", func(t *testing.T) {
-		t.Run("empty", func(t *testing.T) {
-			t.Run("token", func(t *testing.T) {
-				// define
 
-				user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
-					FirstName: firstName,
-					LastName:  lastName,
-					Age:       uint64(age),
-					Sex:       api.Sex_SexMale,
-					Login:     login,
-					Pass:      pass,
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+		t.Run("failed", func(t *testing.T) {
+			t.Run("token empty", func(t *testing.T) {
+				t.Run("token", func(t *testing.T) {
+					// define
+					user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
+						FirstName: firstName,
+						LastName:  lastName,
+						Age:       uint64(age),
+						Sex:       api.Sex_SexMale,
+						Login:     login,
+						Pass:      pass,
+					})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
+					ctx = context.WithValue(ctx, "x-request-id", user.User.Login)
 
-				_, err = cli.GetUserToken(ctx, &api.GetUserTokenRequest{
-					Login:    user.User.Login,
-					Password: pass,
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
-						Login:    user.User.Login,
-						Password: pass,
-					}); err != nil {
+					resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
 
-				resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
-						t.Fatal(err)
-					}
-				}()
-
-				_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
-					UserId:     user.User.Id,
-					ResourceId: resource.Resource.Id,
-				})
-				assert.Nil(t, err)
-				defer func() {
-					if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+					if _, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
 						UserId:     user.User.Id,
 						ResourceId: resource.Resource.Id,
 					}); err != nil {
 						t.Fatal(err)
 					}
-				}()
-				//check
+					defer func() {
+						if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+							UserId:     user.User.Id,
+							ResourceId: resource.Resource.Id,
+						}); err != nil {
+							t.Fatal(err)
+						}
+					}()
 
-				var falseToken []byte
-				_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-					ResourceId: resource.Resource.Id,
-					Token:      falseToken,
-				})
-				if err == nil {
-					t.Fatal(err)
-				}
-				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
-					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
-			})
-			t.Run("resourceId", func(t *testing.T) {
-				// define
-
-				user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
-					FirstName: firstName,
-					LastName:  lastName,
-					Age:       uint64(age),
-					Sex:       api.Sex_SexMale,
-					Login:     login,
-					Pass:      pass,
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+					//check
+					if _, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
+						ResourceId: resource.Resource.Id,
+					}); err == nil {
 						t.Fatal(err)
 					}
-				}()
-
-				token, err := cli.GetUserToken(ctx, &api.GetUserTokenRequest{
-					Login:    user.User.Login,
-					Password: pass,
+					assert.Equalf(t, status.Code(err), codes.Unauthenticated, "invalid code response: want(%s) got(%s)", codes.Unauthenticated, status.Code(err))
 				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
+
+				t.Run("resourceId", func(t *testing.T) {
+					// define
+
+					user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
+						FirstName: firstName,
+						LastName:  lastName,
+						Age:       uint64(age),
+						Sex:       api.Sex_SexMale,
+						Login:     login,
+						Pass:      pass,
+					})
+					if err != nil {
+						t.Fatal(err)
+					}
+					defer func() {
+						if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
+					ctx = context.WithValue(ctx, "x-request-id", user.User.Login)
+
+					token, err := cli.GetUserToken(ctx, &api.GetUserTokenRequest{
 						Login:    user.User.Login,
 						Password: pass,
-					}); err != nil {
+					})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
+							Login:    user.User.Login,
+							Password: pass,
+						}); err != nil {
+							t.Fatal(err)
+						}
+					}()
+					ctx = context.WithValue(ctx, "token", token.Token)
 
-				resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+					resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
 
-				_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
-					UserId:     user.User.Id,
-					ResourceId: resource.Resource.Id,
-				})
-				assert.Nil(t, err)
-				defer func() {
-					if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+					_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
 						UserId:     user.User.Id,
 						ResourceId: resource.Resource.Id,
-					}); err != nil {
+					})
+					assert.Nil(t, err)
+					defer func() {
+						if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+							UserId:     user.User.Id,
+							ResourceId: resource.Resource.Id,
+						}); err != nil {
+							t.Fatal(err)
+						}
+					}()
+					//check
+
+					_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
+						ResourceId: "",
+					})
+					if err == nil {
 						t.Fatal(err)
 					}
-				}()
-				//check
-
-				_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-					ResourceId: "",
-					Token:      token.Token,
+					assert.Equalf(t, status.Code(err), codes.InvalidArgument,
+						"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				})
-				if err == nil {
-					t.Fatal(err)
-				}
-				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
-					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
-			})
-			t.Run("all_fields_empty", func(t *testing.T) {
-				// define
 
-				user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
-					FirstName: firstName,
-					LastName:  lastName,
-					Age:       uint64(age),
-					Sex:       api.Sex_SexMale,
-					Login:     login,
-					Pass:      pass,
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+				t.Run("all_fields_empty", func(t *testing.T) {
+					// define
+
+					user, err := cli.CreateUser(ctx, &api.CreateUserRequest{
+						FirstName: firstName,
+						LastName:  lastName,
+						Age:       uint64(age),
+						Sex:       api.Sex_SexMale,
+						Login:     login,
+						Pass:      pass,
+					})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteUser(ctx, &api.DeleteUserRequest{Id: user.User.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
 
-				_, err = cli.GetUserToken(ctx, &api.GetUserTokenRequest{
-					Login:    user.User.Login,
-					Password: pass,
-				})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
+					_, err = cli.GetUserToken(ctx, &api.GetUserTokenRequest{
 						Login:    user.User.Login,
 						Password: pass,
-					}); err != nil {
+					})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteUserToken(ctx, &api.DeleteUserTokenRequest{
+							Login:    user.User.Login,
+							Password: pass,
+						}); err != nil {
+							t.Fatal(err)
+						}
+					}()
 
-				resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer func() {
-					if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+					resource, err := cli.CreateResource(ctx, &api.CreateResourceRequest{Urn: urn})
+					if err != nil {
 						t.Fatal(err)
 					}
-				}()
+					defer func() {
+						if _, err := cli.DeleteResource(ctx, &api.DeleteResourceRequest{Id: resource.Resource.Id}); err != nil {
+							t.Fatal(err)
+						}
+					}()
 
-				_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
-					UserId:     user.User.Id,
-					ResourceId: resource.Resource.Id,
-				})
-				assert.Nil(t, err)
-				defer func() {
-					if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+					_, err = cli.SetUserAccess(ctx, &api.SetUserAccessRequest{
 						UserId:     user.User.Id,
 						ResourceId: resource.Resource.Id,
-					}); err != nil {
+					})
+					assert.Nil(t, err)
+					defer func() {
+						if _, err := cli.DeleteUserAccess(ctx, &api.DeleteUserAccessRequest{
+							UserId:     user.User.Id,
+							ResourceId: resource.Resource.Id,
+						}); err != nil {
+							t.Fatal(err)
+						}
+					}()
+
+					//check
+
+					_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
+						ResourceId: "",
+					})
+					if err == nil {
 						t.Fatal(err)
 					}
-				}()
-
-				//check
-
-				var falseToken []byte
-				_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-					ResourceId: "",
-					Token:      falseToken,
+					assert.Equalf(t, status.Code(err), codes.InvalidArgument,
+						"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 				})
-				if err == nil {
-					t.Fatal(err)
-				}
-				assert.Equalf(t, status.Code(err), codes.InvalidArgument,
-					"invalid code response: want(%s) got(%s)", codes.InvalidArgument, status.Code(err))
 			})
 		})
 	})

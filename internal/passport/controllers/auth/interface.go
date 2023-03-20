@@ -13,4 +13,5 @@ type Service interface {
 	CheckUserAccess(ctx context.Context, params *CheckUserAccessRequest) (bool, error)
 	SetUserAccess(ctx context.Context, resourceID string, UserID string) error
 	DeleteUserAccess(ctx context.Context, userID *string, resourceId *string) error
+	UpdateAuth(ctx context.Context, auth *models.Auth) error
 }

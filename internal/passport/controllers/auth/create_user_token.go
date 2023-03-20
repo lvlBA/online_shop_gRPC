@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"crypto/sha512"
 	"errors"
 	"fmt"
 
@@ -42,13 +41,5 @@ func (s *ServiceImpl) CreateUserToken(ctx context.Context, params *CreateUserTok
 }
 
 func createToken() ([]byte, error) {
-	id := uuid.New()
-	b, err := id.MarshalBinary()
-	if err != nil {
-		return nil, err
-	}
-
-	token := sha512.Sum512(b)
-
-	return token[:], nil
+	return []byte(uuid.New().String()), nil
 }

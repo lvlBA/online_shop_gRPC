@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	"github.com/lvlBA/online_shop/internal/management/controllers"
+	"github.com/lvlBA/online_shop/internal/passport/controllers"
 	"github.com/lvlBA/online_shop/internal/passport/db"
 	"github.com/lvlBA/online_shop/internal/passport/models"
 )
@@ -19,7 +19,8 @@ func (s *ServiceImpl) GetUserToken(ctx context.Context, params *GetUserTokenRequ
 		Token:  params.Token,
 	})
 	if err != nil {
-		return nil, controllers.AdaptingErrorDB(err)
+		err = controllers.AdaptingErrorDB(err)
+		return nil, err
 	}
 
 	return auth, nil

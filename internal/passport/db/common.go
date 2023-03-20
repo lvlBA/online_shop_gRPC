@@ -29,6 +29,25 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	return id, nil
 }
 
+func (s *ServiceImpl) update(ctx context.Context, table string, id string, req interface{}) error {
+	query, _, err := goqu.From(table).
+		Update().
+		Set(req).
+		Where(goqu.Ex{"id": id}).
+		ToSQL()
+	if err != nil {
+		return err
+	}
+	fmt.Println(query)
+	_, err = s.ExecContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 func (s *ServiceImpl) delete(ctx context.Context, table, id string) error {
 	query, _, err := goqu.From(table).Delete().Where(goqu.Ex{"id": id}).ToSQL()
 	if err != nil {

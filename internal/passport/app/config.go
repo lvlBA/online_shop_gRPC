@@ -2,6 +2,7 @@ package app
 
 import (
 	"net"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc"
@@ -11,9 +12,10 @@ import (
 )
 
 type Config struct {
-	GrpcAddr string `json:"grpc_addr" yaml:"grpc_addr" env:"GRPC_ADDR" envDefault:":9091"`
-	DbHost   string `json:"db_host"   yaml:"db_host"   env:"DB_HOST"   envDefault:"postgres://db:db@localhost:5478/db"`
-	LogLevel string `json:"log_level" yaml:"log_level" env:"LOG_LEVEL" envDefault:"error"`
+	GrpcAddr     string        `json:"grpc_addr"     yaml:"grpc_addr"     env:"GRPC_ADDR"     envDefault:":9092"`
+	DbHost       string        `json:"db_host"       yaml:"db_host"       env:"DB_HOST"       envDefault:"postgres://db:db@localhost:5478/db"`
+	LogLevel     string        `json:"log_level"     yaml:"log_level"     env:"LOG_LEVEL"     envDefault:"error"`
+	TokenExpired time.Duration `json:"token_expired" yaml:"token_expired" env:"DURATION"      envDefault:"10m"`
 }
 
 func (c *Config) getLogger() (logger.Logger, error) {
@@ -33,11 +35,8 @@ func (c *Config) getGrpcListener() (net.Listener, error) {
 }
 
 func (c *Config) getGrpcServer(inters ...grpc.UnaryServerInterceptor) *grpc.Server {
-	options := make([]grpc.ServerOption, 0, len(inters)+1)
-	options = append(options, grpc.KeepaliveParams(keepAliveParams))
-	for i := range inters {
-		options = append(options, grpc.UnaryInterceptor(inters[i]))
-	}
-
-	return grpc.NewServer(options...)
+	return grpc.NewServer(
+		grpc.KeepaliveParams(keepAliveParams),
+		grpc.ChainUnaryInterceptor(inters...),
+	)
 }

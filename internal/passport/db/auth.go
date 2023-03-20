@@ -8,6 +8,7 @@ import (
 	"github.com/doug-martin/goqu/v9"
 	"github.com/lvlBA/online_shop/internal/passport/models"
 	"strings"
+	"time"
 )
 
 const (
@@ -63,12 +64,15 @@ func (a *AuthImpl) GetUserAuth(ctx context.Context, params *GetUserAuthParams) (
 		return nil, fmt.Errorf("failed to calc filter: %w", err)
 	}
 
+	expired := time.Now().Add(time.Minute * -10)
+	sd = sd.Where(goqu.C("changed_at").Gt(expired))
+
 	query, _, err := sd.ToSQL()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %w", err)
 	}
 
-	result := &models.Auth{}
+	result := new(models.Auth)
 	if err = a.svc.GetContext(ctx, result, query); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrorNotFound
@@ -221,6 +225,39 @@ func (a *AuthImpl) SetUserAccess(ctx context.Context, resourceID string, userID 
 		}
 
 		return fmt.Errorf("failed to create new model: %w", err)
+	}
+
+	return nil
+}
+
+func (a *AuthImpl) UpdateAuth(ctx context.Context, model *models.Auth) error {
+	model.UpdateMeta()
+
+	if err := a.svc.update(ctx, tableNameAuth, model.ID, model); err != nil {
+		return fmt.Errorf("failed to create new model: %w", err)
+	}
+
+	return nil
+}
+
+func (a *AuthImpl) DeleteOldTokens(ctx context.Context) error {
+	expired := time.Now().Add(time.Hour * -24)
+	query, _, err := goqu.From(tableNameAuth).Delete().Where(goqu.C("changed_at").Gt(expired)).ToSQL()
+	if err != nil {
+		return err
+	}
+
+	res, err := a.svc.ExecContext(ctx, query)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrorNotFound
+		}
+
+		return err
+	}
+
+	if count, _ := res.RowsAffected(); count == 0 {
+		return ErrorNotFound
 	}
 
 	return nil

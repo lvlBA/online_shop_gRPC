@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
+	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	garbagecollector "github.com/lvlBA/online_shop/internal/passport/garbage_collector"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -33,15 +35,33 @@ func Run(cfg *Config) error {
 		return fmt.Errorf("failed to get logger: %w", err)
 	}
 
+	// interceptors
+	getUserMetaIntr := grpcinterceptors.NewGetUserMeta()
+	gs := gracefulshutdown.New(&gracefulshutdown.Config{
+		Ctx:  context.Background(),
+		Log:  log,
+		Stop: nil,
+	})
+
 	grpcListener, err := cfg.getGrpcListener()
 	if err != nil {
 		return fmt.Errorf("failed to get listener: %w", err)
 	}
+	defer func() {
+		if err := grpcListener.Close(); err != nil {
+			log.Error(gs.GetContext(), " failed to close listener %w", err)
+		}
+	}()
 
 	conn, err := cfg.getDatabaseConnection()
 	if err != nil {
 		return fmt.Errorf("failed to get db connection: %w", err)
 	}
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Error(gs.GetContext(), " failed to close db connection %w", err)
+		}
+	}()
 
 	// controllers
 	dbSvc := db.New(conn)
@@ -59,18 +79,25 @@ func Run(cfg *Config) error {
 		CtrlUser:     userCtrl,
 	})
 
-	gs := gracefulshutdown.New(&gracefulshutdown.Config{
-		Ctx:           context.Background(),
-		Log:           log,
-		Stop:          nil,
-		StopWithError: nil,
+	// garbage collectors
+	gcToken := garbagecollector.NewToken(&garbagecollector.Config{
+		Log:     log,
+		Expired: cfg.TokenExpired,
+		DB:      dbSvc,
+		Timeout: time.Hour * 24,
 	})
-	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor)
+
+	// GRPC register
+	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor, getUserMetaIntr.GrpcInterceptor)
 	gs.AddStop(grpcSvc.Stop)
 	api.RegisterUserServiceServer(grpcSvc, userApp)
 	api.RegisterResourceServiceServer(grpcSvc, resourceApp)
 	api.RegisterAuthServiceServer(grpcSvc, authApp)
+
+	gs.GetWG().Add(1)
+	go gcToken.Observe(gs.GetContext(), gs.GetWG())
 	go gs.Observe()
+
 	if err = grpcSvc.Serve(grpcListener); err != nil {
 		return fmt.Errorf("failed to start server: %w", err)
 	}

@@ -2,7 +2,6 @@ package gracefulshutdown
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"sync"
@@ -19,20 +18,18 @@ type StopHandle func()
 type StopWithErrorHandle func() error
 
 type GracefulShutDown struct {
-	ch            chan os.Signal
-	log           logger.Logger
-	ctx           context.Context
-	cancel        context.CancelFunc
-	wg            *sync.WaitGroup
-	stop          []StopHandle
-	stopWithError []StopWithErrorHandle
+	ch     chan os.Signal
+	log    logger.Logger
+	ctx    context.Context
+	cancel context.CancelFunc
+	wg     *sync.WaitGroup
+	stop   []StopHandle
 }
 
 type Config struct {
-	Ctx           context.Context
-	Log           logger.Logger
-	Stop          []StopHandle
-	StopWithError []StopWithErrorHandle
+	Ctx  context.Context
+	Log  logger.Logger
+	Stop []StopHandle
 }
 
 func New(cfg *Config) *GracefulShutDown {
@@ -41,13 +38,12 @@ func New(cfg *Config) *GracefulShutDown {
 	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT)
 
 	return &GracefulShutDown{
-		ch:            ch,
-		log:           cfg.Log,
-		ctx:           ctx,
-		cancel:        cancel,
-		wg:            new(sync.WaitGroup),
-		stop:          cfg.Stop,
-		stopWithError: cfg.StopWithError,
+		ch:     ch,
+		log:    cfg.Log,
+		ctx:    ctx,
+		cancel: cancel,
+		wg:     new(sync.WaitGroup),
+		stop:   cfg.Stop,
 	}
 }
 
@@ -59,29 +55,24 @@ func (s *GracefulShutDown) Observe() {
 	for i := range s.stop {
 		s.stop[i]()
 	}
-	for i := range s.stopWithError {
-		if err := s.stopWithError[i](); err != nil {
-			s.log.Error(s.ctx, "failed to stop", err)
-		}
-	}
 }
 
 func (s *GracefulShutDown) AddStop(handle StopHandle) {
 	s.stop = append(s.stop, handle)
 }
 
-func (s *GracefulShutDown) AddStopWithError(handle StopWithErrorHandle) {
-	s.stopWithError = append(s.stopWithError, handle)
-}
-
 func (s *GracefulShutDown) GetContext() context.Context {
 	return s.ctx
 }
 
-func (s *GracefulShutDown) GrpcInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func (s *GracefulShutDown) GetWG() *sync.WaitGroup {
+	return s.wg
+}
+
+func (s *GracefulShutDown) GrpcInterceptor(
+	ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	s.wg.Add(1)
 	defer s.wg.Done()
-	fmt.Println(info.FullMethod)
 
 	if err := s.ctx.Err(); err != nil {
 		return nil, status.Error(codes.Canceled, err.Error())

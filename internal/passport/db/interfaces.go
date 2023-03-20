@@ -31,6 +31,7 @@ type service interface {
 	Service
 	SqlClient
 	create(ctx context.Context, table string, req any) (string, error)
+	update(ctx context.Context, table string, id string, req interface{}) error
 	delete(ctx context.Context, table, id string) error
 }
 
@@ -50,4 +51,6 @@ type Auth interface {
 	DeleteUserAccess(ctx context.Context, params *DeleteUserAccessParams) error
 	SetUserAccess(ctx context.Context, resourceID string, UserID string) error
 	GetUserAccess(ctx context.Context, params *GetUserAccessParams) (*models.Access, error)
+	UpdateAuth(ctx context.Context, auth *models.Auth) error
+	DeleteOldTokens(ctx context.Context) error
 }

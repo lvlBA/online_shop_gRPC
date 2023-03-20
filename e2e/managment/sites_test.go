@@ -76,6 +76,7 @@ func invalidFatal(t *testing.T, want, got interface{}) {
 
 func Test_sites(t *testing.T) {
 	ctx := context.Background()
+	ctx = context.WithValue(ctx, "x-request-id", "kav")
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
 		t.Fatalf("failed to parse config: %s", err)

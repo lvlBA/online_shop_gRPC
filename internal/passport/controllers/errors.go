@@ -3,7 +3,7 @@ package controllers
 import (
 	"errors"
 
-	"github.com/lvlBA/online_shop/internal/management/db"
+	"github.com/lvlBA/online_shop/internal/passport/db"
 )
 
 var (

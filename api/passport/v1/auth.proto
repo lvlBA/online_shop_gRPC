@@ -45,7 +45,6 @@ message GetUserTokenResponse {
 
 message CheckUserAccessRequest {
   string resource_id = 1;
-  bytes token = 2;
 }
 
 message CheckUserAccessResponse {

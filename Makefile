@@ -20,7 +20,7 @@ PASSPORT_PROTO_OUT_DIR 	= pkg/passport/v1
 # Commands
 
 .PHONY: gen-proto
-gen-proto: gen-proto-management
+gen-proto: gen-proto-management gen-proto-passport
 
 .PHONY: gen-proto-management
 gen-proto-management:
