@@ -1,6 +1,6 @@
 package grpcinterceptors
 
 const (
-	xRequestIdKey = "x-request-id"
-	tokenKey      = "token"
+	XRequestIdKey = "x-request-id"
+	TokenKey      = "token"
 )

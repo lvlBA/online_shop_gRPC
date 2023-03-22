@@ -21,17 +21,19 @@ func New(log logger.Logger, cli api.AuthServiceClient) *CheckUserAccess {
 	}
 }
 
-func (c *CheckUserAccess) GrpcInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	if _, err := c.cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-		ResourceId: info.FullMethod,
-	}); err != nil {
+func (c *CheckUserAccess) GrpcInterceptor(
+	ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+
+	ctxWithMeta := metaToContext(ctx, XRequestIdKey, TokenKey)
+	_, err := c.cli.CheckUserAccess(contextToMeta(ctxWithMeta, XRequestIdKey, TokenKey), &api.CheckUserAccessRequest{Resource: info.FullMethod})
+	if err != nil {
 		if status.Code(err) == codes.Unauthenticated {
 			return nil, err
 		}
-		c.log.Error(ctx, "failed to check user access", err, "req", req)
+		c.log.Error(ctxWithMeta, "failed to check user access", err, "req", req)
 
 		return nil, status.Error(codes.Internal, "error check user access")
 	}
 
-	return handler(ctx, req)
+	return handler(ctxWithMeta, req)
 }

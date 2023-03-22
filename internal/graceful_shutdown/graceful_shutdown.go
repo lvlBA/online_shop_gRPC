@@ -69,8 +69,7 @@ func (s *GracefulShutDown) GetWG() *sync.WaitGroup {
 	return s.wg
 }
 
-func (s *GracefulShutDown) GrpcInterceptor(
-	ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func (s *GracefulShutDown) GrpcInterceptor(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	s.wg.Add(1)
 	defer s.wg.Done()
 

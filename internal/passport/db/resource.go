@@ -60,7 +60,7 @@ func (p *GetResourceParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset,
 	case p.ID != nil:
 		return sd.Where(goqu.Ex{"id": *p.ID}), nil
 	case p.Resource != nil:
-		return sd.Where(goqu.Ex{"resources": *p.Resource}), nil
+		return sd.Where(goqu.Ex{"urn": *p.Resource}), nil
 	default:
 		return nil, errors.New("undefined behavior: id is not set and resource is not set")
 	}

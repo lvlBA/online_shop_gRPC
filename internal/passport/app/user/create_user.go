@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	"regexp"
 
-	"github.com/lvlBA/online_shop/internal/management/controllers"
+	"github.com/lvlBA/online_shop/internal/passport/controllers"
 	controllersUser "github.com/lvlBA/online_shop/internal/passport/controllers/user"
 	"github.com/lvlBA/online_shop/internal/passport/models"
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
@@ -70,7 +70,7 @@ func validateCreateUserReq(req *api.CreateUserRequest) error {
 			req.Login,
 			validation.Required,
 			validation.Match(
-				regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9]{4,254}$"),
+				regexp.MustCompile("^[a-zA-Z]{1,}[a-zA-Z0-9]{4,254}$"),
 			),
 		),
 		"pass": validation.Validate(

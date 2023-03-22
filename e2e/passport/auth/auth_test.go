@@ -475,7 +475,7 @@ func Test_auth(t *testing.T) {
 
 			// check
 			_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-				ResourceId: resource.Resource.Id,
+				Resource: resource.Resource.Urn,
 			})
 			if err != nil {
 				t.Fatal(err)
@@ -531,7 +531,7 @@ func Test_auth(t *testing.T) {
 
 					//check
 					if _, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-						ResourceId: resource.Resource.Id,
+						Resource: resource.Resource.Urn,
 					}); err == nil {
 						t.Fatal(err)
 					}
@@ -602,7 +602,7 @@ func Test_auth(t *testing.T) {
 					//check
 
 					_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-						ResourceId: "",
+						Resource: "",
 					})
 					if err == nil {
 						t.Fatal(err)
@@ -674,7 +674,7 @@ func Test_auth(t *testing.T) {
 					//check
 
 					_, err = cli.CheckUserAccess(ctx, &api.CheckUserAccessRequest{
-						ResourceId: "",
+						Resource: "",
 					})
 					if err == nil {
 						t.Fatal(err)

@@ -40,11 +40,11 @@ message GetUserTokenRequest {
 }
 
 message GetUserTokenResponse {
-  bytes token = 1;
+  string token = 1;
 }
 
 message CheckUserAccessRequest {
-  string resource_id = 1;
+  string resource = 1;
 }
 
 message CheckUserAccessResponse {

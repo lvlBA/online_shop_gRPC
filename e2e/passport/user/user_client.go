@@ -15,7 +15,7 @@ type SiteClientImpl struct {
 }
 
 type Config struct {
-	Addr string `env:"ADDR" envDefault:"localhost:9091"`
+	Addr string `env:"ADDR" envDefault:"localhost:9092"`
 }
 
 func New(ctx context.Context, cfg *Config) (*SiteClientImpl, error) {

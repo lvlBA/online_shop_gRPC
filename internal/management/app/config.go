@@ -9,10 +9,10 @@ import (
 )
 
 type Config struct {
-	GrpcAddr         string `json:"grpc_addr" yaml:"grpc_addr" env:"GRPC_ADDR" envDefault:":9090"`
-	GrpcPassportAddr string `json:"passport_grpc_addr" yaml:"passport_grpc_addr" env:"PASSPORT_GRPC_ADDR" envDefault:":9091"`
-	DbHost           string `json:"db_host"   yaml:"db_host"   env:"DB_HOST"   envDefault:"postgres://db:db@localhost:5478/db"`
-	LogLevel         string `json:"log_level" yaml:"log_level" env:"LOG_LEVEL" envDefault:"error"`
+	GrpcAddr         string `json:"grpc_addr"          yaml:"grpc_addr"          env:"GRPC_ADDR"          envDefault:":9090"`
+	GrpcPassportAddr string `json:"passport_grpc_addr" yaml:"passport_grpc_addr" env:"PASSPORT_GRPC_ADDR" envDefault:":9092"`
+	DbHost           string `json:"db_host"            yaml:"db_host"            env:"DB_HOST"            envDefault:"postgres://db:db@localhost:5478/db"`
+	LogLevel         string `json:"log_level"          yaml:"log_level"          env:"LOG_LEVEL"          envDefault:"error"`
 }
 
 func (c *Config) getLogger() (logger.Logger, error) {

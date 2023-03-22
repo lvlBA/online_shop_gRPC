@@ -23,14 +23,9 @@ func (s *ServiceImpl) CreateUserToken(ctx context.Context, params *CreateUserTok
 			return nil, fmt.Errorf("failed to get auth by user id: %w", err)
 		}
 
-		token, err := createToken()
-		if err != nil {
-			return nil, fmt.Errorf("failed to create token: %w", err)
-		}
-
 		auth, err = s.db.Auth().CreateUserAuth(ctx, &db.CreateUserTokenParams{
 			UserID: params.UserID,
-			Token:  token,
+			Token:  createToken(),
 		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to create auth: %w", err)
@@ -40,6 +35,6 @@ func (s *ServiceImpl) CreateUserToken(ctx context.Context, params *CreateUserTok
 	return auth, nil
 }
 
-func createToken() ([]byte, error) {
-	return []byte(uuid.New().String()), nil
+func createToken() string {
+	return uuid.New().String()
 }

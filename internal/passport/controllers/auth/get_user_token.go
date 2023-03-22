@@ -10,7 +10,7 @@ import (
 
 type GetUserTokenRequest struct {
 	UserID *string
-	Token  []byte
+	Token  *string
 }
 
 func (s *ServiceImpl) GetUserToken(ctx context.Context, params *GetUserTokenRequest) (*models.Auth, error) {

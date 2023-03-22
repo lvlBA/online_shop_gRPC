@@ -3,7 +3,7 @@ package models
 type Auth struct {
 	Meta
 	UserID string `db:"user_id"`
-	Token  []byte `db:"token"`
+	Token  string `db:"token"`
 }
 
 type Access struct {

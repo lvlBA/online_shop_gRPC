@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/lvlBA/online_shop/internal/management/controllers"
+	"github.com/lvlBA/online_shop/internal/passport/controllers"
 	controllersresource "github.com/lvlBA/online_shop/internal/passport/controllers/resource"
 	"github.com/lvlBA/online_shop/internal/passport/models"
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
@@ -49,7 +49,7 @@ func validateCreateResource(req *api.CreateResourceRequest) error {
 			req.Urn,
 			validation.Required,
 			validation.Match(
-				regexp.MustCompile("^[a-zA-Z][a-zA-Z0-9]{4,254}$"),
+				regexp.MustCompile(`^[a-zA-Z0-9_\-./]{4,254}$`),
 			),
 		),
 	}.Filter()

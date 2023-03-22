@@ -22,7 +22,7 @@ type AuthImpl struct {
 
 type CreateUserTokenParams struct {
 	UserID string
-	Token  []byte
+	Token  string
 }
 
 func (a *AuthImpl) CreateUserAuth(ctx context.Context, params *CreateUserTokenParams) (*models.Auth, error) {
@@ -44,7 +44,7 @@ func (a *AuthImpl) CreateUserAuth(ctx context.Context, params *CreateUserTokenPa
 
 type GetUserAuthParams struct {
 	UserID *string
-	Token  []byte
+	Token  *string
 }
 
 func (p *GetUserAuthParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset, error) {
@@ -135,14 +135,17 @@ type DeleteUserAccessParams struct {
 }
 
 func (p *DeleteUserAccessParams) filter(sd *goqu.SelectDataset) (*goqu.SelectDataset, error) {
-	switch {
-	case p.UserID != nil:
-		return sd.Where(goqu.Ex{"user_id": *p.UserID}), nil
-	case p.ResourceID != nil:
-		return sd.Where(goqu.Ex{"resource_id": *p.ResourceID}), nil
-	default:
+	if p.UserID == nil && p.ResourceID == nil {
 		return nil, errors.New("undefined behavior: user id is not set and resource_id is not set")
 	}
+	if p.UserID != nil {
+		sd = sd.Where(goqu.Ex{"user_id": *p.UserID})
+	}
+	if p.ResourceID != nil {
+		sd = sd.Where(goqu.Ex{"resource_id": *p.ResourceID})
+	}
+
+	return sd, nil
 }
 
 func (a *AuthImpl) DeleteUserAccess(ctx context.Context, params *DeleteUserAccessParams) error {
@@ -155,6 +158,7 @@ func (a *AuthImpl) DeleteUserAccess(ctx context.Context, params *DeleteUserAcces
 	if err != nil {
 		return fmt.Errorf("failed to build query: %w", err)
 	}
+	fmt.Println(query)
 
 	res, err := a.svc.ExecContext(ctx, query)
 	if err != nil {

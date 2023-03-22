@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"github.com/lvlBA/online_shop/internal/management/controllers"
+	"github.com/lvlBA/online_shop/internal/passport/controllers"
 
 	"github.com/lvlBA/online_shop/internal/passport/db"
 	"github.com/lvlBA/online_shop/internal/passport/models"
