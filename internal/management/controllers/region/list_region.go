@@ -1,4 +1,4 @@
-package site
+package region
 
 import (
 	"context"
@@ -12,8 +12,8 @@ type ListParams struct {
 	Pagination *models.Pagination
 }
 
-func (s *ServiceImpl) List(ctx context.Context, params *ListParams) ([]*models.Site, error) {
-	resp, err := s.db.Site().ListSites(ctx, &db.ListSitesFilter{
+func (s *ServiceImpl) ListRegion(ctx context.Context, params *ListParams) ([]*models.Region, error) {
+	resp, err := s.db.Region().ListRegion(ctx, &db.ListRegionFilter{
 		Pagination: params.Pagination,
 	})
 	return resp, controllers.AdaptingErrorDB(err)

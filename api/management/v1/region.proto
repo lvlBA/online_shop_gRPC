@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package online_shop.management.v1;
+
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
+
+option go_package = "github.com/lvlBA/online_shop/management;management";
+
+service RegionService {
+  rpc CreateRegion(CreateRegionRequest) returns (CreateRegionResponse) {}
+  rpc GetRegion(GetRegionRequest) returns (GetRegionResponse) {}
+  rpc DeleteRegion(DeleteRegionRequest) returns (DeleteRegionResponse) {}
+  rpc ListRegion(ListRegionsRequest) returns (ListRegionsResponse) {}
+}
+
+
+message Region {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateRegionRequest {
+  string name = 1;
+}
+
+message CreateRegionResponse {
+  Region region = 1;
+}
+
+message GetRegionRequest {
+  string id = 1;
+}
+
+message GetRegionResponse {
+  Region region = 1;
+}
+
+message DeleteRegionRequest {
+  string id = 1;
+}
+
+message DeleteRegionResponse {
+}
+
+message ListRegionsRequest {
+  online_shop.api.Pagination pagination = 1;
+}
+
+message ListRegionsResponse {
+  repeated Region region = 1;
+}

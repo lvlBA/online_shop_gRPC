@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SiteServiceClient interface {
-	// CreateSite - implements (this is a comment for public API)
 	CreateSite(ctx context.Context, in *CreateSideRequest, opts ...grpc.CallOption) (*CreateSideResponse, error)
 	GetSite(ctx context.Context, in *GetSiteRequest, opts ...grpc.CallOption) (*GetSiteResponse, error)
 	DeleteSite(ctx context.Context, in *DeleteSiteRequest, opts ...grpc.CallOption) (*DeleteSiteResponse, error)
@@ -77,7 +76,6 @@ func (c *siteServiceClient) ListSites(ctx context.Context, in *ListSitesRequest,
 // All implementations must embed UnimplementedSiteServiceServer
 // for forward compatibility
 type SiteServiceServer interface {
-	// CreateSite - implements (this is a comment for public API)
 	CreateSite(context.Context, *CreateSideRequest) (*CreateSideResponse, error)
 	GetSite(context.Context, *GetSiteRequest) (*GetSiteResponse, error)
 	DeleteSite(context.Context, *DeleteSiteRequest) (*DeleteSiteResponse, error)

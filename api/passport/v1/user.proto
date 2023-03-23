@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package online_shop.passport.v1;
 
-import "pagination.proto";
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
 
 option go_package = "github.com/lvlBA/online_shop/passport;passport";
 
@@ -68,7 +68,7 @@ message DeleteUserResponse {
 }
 
 message ListUsersRequest {
-  Pagination pagination = 1;
+  online_shop.api.Pagination pagination = 1;
   optional string name = 2;
   optional Sex sex = 3;
   optional uint32 min_age = 4;

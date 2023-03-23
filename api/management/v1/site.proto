@@ -2,12 +2,11 @@ syntax = "proto3";
 
 package online_shop.management.v1;
 
-import "pagination_management.proto";
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
 
 option go_package = "github.com/lvlBA/online_shop/management;management";
 
 service SiteService {
-  // CreateSite - implements (this is a comment for public API)
   rpc CreateSite(CreateSideRequest) returns (CreateSideResponse) {}
   rpc GetSite(GetSiteRequest) returns (GetSiteResponse) {}
   rpc DeleteSite(DeleteSiteRequest) returns (DeleteSiteResponse) {}
@@ -43,7 +42,7 @@ message DeleteSiteResponse {
 }
 
 message ListSitesRequest {
-  Pagination pagination = 1;
+  online_shop.api.Pagination pagination = 1;
 }
 
 message ListSitesResponse {

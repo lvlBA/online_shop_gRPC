@@ -1,4 +1,4 @@
-package site
+package location
 
 import (
 	"context"
@@ -13,24 +13,24 @@ import (
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
 )
 
-func (s ServiceImpl) DeleteSite(ctx context.Context, req *api.DeleteSiteRequest) (*api.DeleteSiteResponse, error) {
-	if err := validateDeleteSideReq(req); err != nil {
+func (s *ServiceImpl) DeleteLocation(ctx context.Context, req *api.DeleteLocationRequest) (*api.DeleteLocationResponse, error) {
+	if err := validateDeleteLocationReq(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := s.ctrlSite.Delete(ctx, req.Id); err != nil {
+	if err := s.ctrlLocation.DeleteLocation(ctx, req.Id); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
-		s.log.Error(ctx, "failed to delete site", err, "request", req)
+		s.log.Error(ctx, "failed to delete location", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error delete site")
+		return nil, status.Error(codes.Internal, "error delete location")
 	}
 
-	return &api.DeleteSiteResponse{}, nil
+	return &api.DeleteLocationResponse{}, nil
 }
 
-func validateDeleteSideReq(req *api.DeleteSiteRequest) error {
+func validateDeleteLocationReq(req *api.DeleteLocationRequest) error {
 	return validation.Errors{
 		"Id": validation.Validate(req.Id, validation.Required, is.UUIDv4),
 	}.Filter()

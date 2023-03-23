@@ -1,4 +1,4 @@
-package site
+package region
 
 import (
 	"context"
@@ -13,24 +13,24 @@ import (
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
 )
 
-func (s ServiceImpl) DeleteSite(ctx context.Context, req *api.DeleteSiteRequest) (*api.DeleteSiteResponse, error) {
-	if err := validateDeleteSideReq(req); err != nil {
+func (s ServiceImpl) DeleteRegion(ctx context.Context, req *api.DeleteRegionRequest) (*api.DeleteRegionResponse, error) {
+	if err := validateDeleteRegionReq(req); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := s.ctrlSite.Delete(ctx, req.Id); err != nil {
+	if err := s.ctrlRegion.DeleteRegion(ctx, req.Id); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
 			return nil, status.Error(codes.NotFound, "Not found")
 		}
-		s.log.Error(ctx, "failed to delete site", err, "request", req)
+		s.log.Error(ctx, "failed to delete region", err, "request", req)
 
-		return nil, status.Error(codes.Internal, "error delete site")
+		return nil, status.Error(codes.Internal, "error delete region")
 	}
 
-	return &api.DeleteSiteResponse{}, nil
+	return &api.DeleteRegionResponse{}, nil
 }
 
-func validateDeleteSideReq(req *api.DeleteSiteRequest) error {
+func validateDeleteRegionReq(req *api.DeleteRegionRequest) error {
 	return validation.Errors{
 		"Id": validation.Validate(req.Id, validation.Required, is.UUIDv4),
 	}.Filter()

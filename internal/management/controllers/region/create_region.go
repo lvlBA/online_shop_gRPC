@@ -1,4 +1,4 @@
-package site
+package region
 
 import (
 	"context"
@@ -8,13 +8,13 @@ import (
 	"github.com/lvlBA/online_shop/internal/management/models"
 )
 
-type ListParams struct {
-	Pagination *models.Pagination
+type CreateParams struct {
+	Name string
 }
 
-func (s *ServiceImpl) List(ctx context.Context, params *ListParams) ([]*models.Site, error) {
-	resp, err := s.db.Site().ListSites(ctx, &db.ListSitesFilter{
-		Pagination: params.Pagination,
+func (s *ServiceImpl) CreateRegion(ctx context.Context, params *CreateParams) (*models.Region, error) {
+	resp, err := s.db.Region().CreateRegion(ctx, &db.CreateRegionParams{
+		Name: params.Name,
 	})
 	return resp, controllers.AdaptingErrorDB(err)
 }

@@ -1,4 +1,4 @@
-package site
+package warehouse
 
 import (
 	"context"
@@ -12,8 +12,8 @@ type ListParams struct {
 	Pagination *models.Pagination
 }
 
-func (s *ServiceImpl) List(ctx context.Context, params *ListParams) ([]*models.Site, error) {
-	resp, err := s.db.Site().ListSites(ctx, &db.ListSitesFilter{
+func (s *ServiceImpl) ListWarehouses(ctx context.Context, params *ListParams) ([]*models.Warehouse, error) {
+	resp, err := s.db.Warehouse().ListWarehouses(ctx, &db.ListWareHouseFilter{
 		Pagination: params.Pagination,
 	})
 	return resp, controllers.AdaptingErrorDB(err)

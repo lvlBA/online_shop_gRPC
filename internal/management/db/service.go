@@ -19,3 +19,27 @@ func (s *ServiceImpl) Site() Site {
 		svc: s,
 	}
 }
+
+func (s *ServiceImpl) Location() Location {
+	return &LocationImpl{
+		svc: s,
+	}
+}
+
+func (s *ServiceImpl) Region() Region {
+	return &RegionImpl{
+		svc: s,
+	}
+}
+
+func (s *ServiceImpl) Warehouse() Warehouse {
+	return &WarehouseImpl{
+		svc: s,
+	}
+}
+
+func (s *ServiceImpl) OrdersStore() OrdersStore {
+	return &OrdersStoreImpl{
+		svc: s,
+	}
+}

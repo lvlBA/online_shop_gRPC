@@ -21,12 +21,18 @@ PASSPORT_PROTO_OUT_DIR 	= pkg/passport/v1
 
 .PHONY: gen-proto
 gen-proto: gen-proto-management gen-proto-passport
+	mkdir -p pkg/api/v1
+	protoc \
+		-I api/v1 \
+		--go_out=pkg/api/v1 --go_opt=paths=source_relative \
+		./api/v1/*.proto
 
 .PHONY: gen-proto-management
 gen-proto-management:
 	mkdir -p ${MANAGEMENT_PROTO_OUT_DIR}
 	protoc \
 		-I ${MANAGEMENT_API_PATH} \
+		-I ${GOPATH}/src \
 		--go_out=$(MANAGEMENT_PROTO_OUT_DIR) --go_opt=paths=source_relative \
         --go-grpc_out=$(MANAGEMENT_PROTO_OUT_DIR)  --go-grpc_opt=paths=source_relative \
 		./${MANAGEMENT_PROTO_API_DIR}/*.proto
@@ -36,6 +42,7 @@ gen-proto-passport:
 	mkdir -p ${PASSPORT_PROTO_OUT_DIR}
 	protoc \
 		-I ${PASSPORT_API_PATH} \
+		-I ${GOPATH}/src \
 		--go_out=$(PASSPORT_PROTO_OUT_DIR) --go_opt=paths=source_relative \
         --go-grpc_out=$(PASSPORT_PROTO_OUT_DIR)  --go-grpc_opt=paths=source_relative \
 		./${PASSPORT_PROTO_API_DIR}/*.proto

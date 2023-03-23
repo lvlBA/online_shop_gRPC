@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package online_shop.management.v1;
+
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
+
+option go_package = "github.com/lvlBA/online_shop/management;management";
+
+
+
+service OrdersStoreService {
+  rpc CreateOrdersStore(CreateOrdersStoreRequest) returns (CreateOrdersStoreResponse) {}
+  rpc GetOrdersStore(GetOrdersStoreRequest) returns (GetOrdersStoreResponse) {}
+  rpc DeleteOrdersStore(DeleteOrdersStoreRequest) returns (DeleteOrdersStoreResponse) {}
+  rpc ListOrdersStore(ListOrdersStoresRequest) returns (ListOrdersStoresResponse) {}
+}
+
+
+message OrdersStore {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateOrdersStoreRequest {
+  string name = 1;
+}
+
+message CreateOrdersStoreResponse {
+  OrdersStore ordersStore = 1;
+}
+
+message GetOrdersStoreRequest {
+  string id = 1;
+}
+
+message GetOrdersStoreResponse {
+  OrdersStore ordersStore = 1;
+}
+
+message DeleteOrdersStoreRequest {
+  string id = 1;
+}
+
+message DeleteOrdersStoreResponse {
+}
+
+message ListOrdersStoresRequest {
+  online_shop.api.Pagination pagination = 1;
+}
+
+message ListOrdersStoresResponse {
+  repeated OrdersStore ordersStore = 1;
+}

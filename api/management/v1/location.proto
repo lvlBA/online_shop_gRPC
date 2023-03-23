@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package online_shop.management.v1;
+
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
+
+option go_package = "github.com/lvlBA/online_shop/management;management";
+
+service LocationService {
+  rpc CreateLocation(CreateLocationRequest) returns (CreateLocationResponse) {}
+  rpc GetLocation(GetLocationRequest) returns (GetLocationResponse) {}
+  rpc DeleteLocation(DeleteLocationRequest) returns (DeleteLocationResponse) {}
+  rpc ListLocation(ListLocationsRequest) returns (ListLocationsResponse) {}
+}
+
+
+message Location {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateLocationRequest {
+  string name = 1;
+}
+
+message CreateLocationResponse {
+  Location location = 1;
+}
+
+message GetLocationRequest {
+  string id = 1;
+}
+
+message GetLocationResponse {
+  Location location = 1;
+}
+
+message DeleteLocationRequest {
+  string id = 1;
+}
+
+message DeleteLocationResponse {
+}
+
+message ListLocationsRequest {
+  online_shop.api.Pagination pagination = 1;
+}
+
+message ListLocationsResponse {
+  repeated Location location = 1;
+}
