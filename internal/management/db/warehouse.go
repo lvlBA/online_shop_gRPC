@@ -17,13 +17,19 @@ type WarehouseImpl struct {
 }
 
 type CreateWarehouseParams struct {
-	Name string
+	Name       string
+	SiteId     string
+	RegionId   string
+	LocationId string
 }
 
 func (w *WarehouseImpl) CreateWarehouse(ctx context.Context, params *CreateWarehouseParams) (*models.Warehouse, error) {
 	model := &models.Warehouse{
-		Meta: models.Meta{},
-		Name: params.Name,
+		Meta:       models.Meta{},
+		Name:       params.Name,
+		SiteId:     params.SiteId,
+		RegionId:   params.RegionId,
+		LocationId: params.LocationId,
 	}
 	model.UpdateMeta()
 

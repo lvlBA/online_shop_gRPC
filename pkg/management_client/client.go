@@ -15,6 +15,10 @@ type Config struct {
 
 type ClientImpl struct {
 	api.SiteServiceClient
+	api.RegionServiceClient
+	api.LocationServiceClient
+	api.WarehouseServiceClient
+	api.OrdersStoreServiceClient
 }
 
 func New(ctx context.Context, cfg *Config, intrs ...grpc.UnaryClientInterceptor) (*ClientImpl, error) {
@@ -30,6 +34,10 @@ func New(ctx context.Context, cfg *Config, intrs ...grpc.UnaryClientInterceptor)
 		return nil, fmt.Errorf("error create connection: %s", err)
 	}
 	return &ClientImpl{
-		SiteServiceClient: api.NewSiteServiceClient(conn),
+		SiteServiceClient:        api.NewSiteServiceClient(conn),
+		RegionServiceClient:      api.NewRegionServiceClient(conn),
+		LocationServiceClient:    api.NewLocationServiceClient(conn),
+		WarehouseServiceClient:   api.NewWarehouseServiceClient(conn),
+		OrdersStoreServiceClient: api.NewOrdersStoreServiceClient(conn),
 	}, nil
 }

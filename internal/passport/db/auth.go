@@ -158,7 +158,6 @@ func (a *AuthImpl) DeleteUserAccess(ctx context.Context, params *DeleteUserAcces
 	if err != nil {
 		return fmt.Errorf("failed to build query: %w", err)
 	}
-	fmt.Println(query)
 
 	res, err := a.svc.ExecContext(ctx, query)
 	if err != nil {

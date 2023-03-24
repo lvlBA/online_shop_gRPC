@@ -1,6 +1,6 @@
-package managment
+package orders_store
 
 type Config struct {
-	Addr         string `env:"ADDR"          envDefault:"localhost:9090"`
+	Addr         string `env:"ADDR" envDefault:"localhost:9090"`
 	PassportAddr string `env:"PASSPORT_ADDR" envDefault:"localhost:9092"`
 }

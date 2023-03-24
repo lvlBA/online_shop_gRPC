@@ -20,7 +20,9 @@ func (s *ServiceImpl) CreateLocation(ctx context.Context, req *api.CreateLocatio
 	}
 
 	location, err := s.ctrlLocation.CreateLocation(ctx, &controllersLocation.CreateParams{
-		Name: req.Name,
+		Name:     req.Name,
+		SiteId:   req.SiteId,
+		RegionId: req.RegionId,
 	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorAlreadyExists) {

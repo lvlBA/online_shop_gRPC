@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	v1 "github.com/lvlBA/online_shop/pkg/api/v1"
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
@@ -300,7 +301,7 @@ func Test_resource(t *testing.T) {
 				for limit := 0; limit <= len(exists)+1; limit++ {
 					t.Run(fmt.Sprintf("limit %d", limit), func(t *testing.T) {
 						got, err := cli.ListResource(ctx, &api.ListResourceRequest{
-							Pagination: &api.Pagination{
+							Pagination: &v1.Pagination{
 								Page:  1,
 								Limit: uint64(limit),
 							},

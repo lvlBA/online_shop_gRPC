@@ -8,13 +8,21 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc/keepalive"
 
-	gracefulshutdown "github.com/lvlBA/online_shop/internal/graceful_shutdown"
-	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	gracefulShutdown "github.com/lvlBA/online_shop/internal/graceful_shutdown"
+	grpcInterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	"github.com/lvlBA/online_shop/internal/management/app/location"
+	"github.com/lvlBA/online_shop/internal/management/app/orders_store"
+	"github.com/lvlBA/online_shop/internal/management/app/region"
 	"github.com/lvlBA/online_shop/internal/management/app/site"
+	"github.com/lvlBA/online_shop/internal/management/app/warehouse"
+	controllersLocation "github.com/lvlBA/online_shop/internal/management/controllers/location"
+	controllersOrdersStore "github.com/lvlBA/online_shop/internal/management/controllers/orders_store"
+	controllersRegion "github.com/lvlBA/online_shop/internal/management/controllers/region"
 	controllersSite "github.com/lvlBA/online_shop/internal/management/controllers/site"
+	controllersWarehouse "github.com/lvlBA/online_shop/internal/management/controllers/warehouse"
 	"github.com/lvlBA/online_shop/internal/management/db"
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
-	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
+	passportClient "github.com/lvlBA/online_shop/pkg/passport_client"
 )
 
 var keepAliveParams = keepalive.ServerParameters{
@@ -31,7 +39,7 @@ func Run(cfg *Config) error {
 		return fmt.Errorf("failed to get logger: %w", err)
 	}
 
-	gs := gracefulshutdown.New(&gracefulshutdown.Config{
+	gs := gracefulShutdown.New(&gracefulShutdown.Config{
 		Ctx:  context.Background(),
 		Log:  log,
 		Stop: nil,
@@ -62,21 +70,38 @@ func Run(cfg *Config) error {
 
 	// controllers
 	dbSvc := db.New(conn)
+
 	siteCtrl := controllersSite.New(dbSvc)
 	siteApp := site.New(siteCtrl, log)
 
-	passportCli, err := passportclient.New(gs.GetContext(), &passportclient.Config{
+	regionCtrl := controllersRegion.New(dbSvc)
+	regionApp := region.New(regionCtrl, log)
+
+	locationCtrl := controllersLocation.New(dbSvc)
+	locationApp := location.New(locationCtrl, log)
+
+	warehouseCtrl := controllersWarehouse.New(dbSvc)
+	warehouseApp := warehouse.New(warehouseCtrl, log)
+
+	ordersStoreCtrl := controllersOrdersStore.New(dbSvc)
+	ordersStoreApp := orders_store.New(ordersStoreCtrl, log)
+
+	passportCli, err := passportClient.New(gs.GetContext(), &passportClient.Config{
 		Addr: cfg.GrpcPassportAddr,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create passport client: %w", err)
 	}
 
-	userAuthInter := grpcinterceptors.New(log, passportCli)
+	userAuthInter := grpcInterceptors.New(log, passportCli)
 	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor, userAuthInter.GrpcInterceptor)
 
 	gs.AddStop(grpcSvc.Stop)
 	api.RegisterSiteServiceServer(grpcSvc, siteApp)
+	api.RegisterRegionServiceServer(grpcSvc, regionApp)
+	api.RegisterLocationServiceServer(grpcSvc, locationApp)
+	api.RegisterWarehouseServiceServer(grpcSvc, warehouseApp)
+	api.RegisterOrdersStoreServiceServer(grpcSvc, ordersStoreApp)
 	go gs.Observe()
 	if err = grpcSvc.Serve(grpcListener); err != nil {
 		return fmt.Errorf("failed to start service: %w", err)

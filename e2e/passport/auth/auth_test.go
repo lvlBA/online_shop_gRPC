@@ -2,16 +2,16 @@ package auth
 
 import (
 	"context"
-	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
-	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"testing"
 
 	"github.com/caarlos0/env/v7"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
+	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
+	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
 )
 
 const (

@@ -21,6 +21,8 @@ message Region {
 
 message CreateRegionRequest {
   string name = 1;
+  string site_id = 2;
+
 }
 
 message CreateRegionResponse {

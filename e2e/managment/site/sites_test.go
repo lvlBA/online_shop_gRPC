@@ -1,19 +1,22 @@
-package managment
+package site
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/caarlos0/env/v7"
+	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	v1 "github.com/lvlBA/online_shop/pkg/api/v1"
 	api "github.com/lvlBA/online_shop/pkg/management/v1"
 	managementclient "github.com/lvlBA/online_shop/pkg/management_client"
 	passportapi "github.com/lvlBA/online_shop/pkg/passport/v1"
 	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
-	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"testing"
 )
 
 type siteResponse interface {
@@ -465,7 +468,7 @@ func Test_sites(t *testing.T) {
 				for limit := 0; limit <= len(exists)+1; limit++ {
 					t.Run(fmt.Sprintf("limit %d", limit), func(t *testing.T) {
 						got, err := mCli.ListSites(ctx, &api.ListSitesRequest{
-							Pagination: &api.Pagination{
+							Pagination: &v1.Pagination{
 								Page:  1,
 								Limit: uint64(limit),
 							},

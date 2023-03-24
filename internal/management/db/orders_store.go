@@ -17,13 +17,21 @@ type OrdersStoreImpl struct {
 }
 
 type CreateOrdersStoreParams struct {
-	Name string
+	Name        string
+	SiteId      string
+	RegionId    string
+	LocationId  string
+	WarehouseId string
 }
 
 func (o *OrdersStoreImpl) CreateOrderStore(ctx context.Context, params *CreateOrdersStoreParams) (*models.OrdersStore, error) {
 	model := &models.OrdersStore{
-		Meta: models.Meta{},
-		Name: params.Name,
+		Meta:        models.Meta{},
+		Name:        params.Name,
+		SiteId:      params.SiteId,
+		RegionId:    params.RegionId,
+		LocationId:  params.LocationId,
+		WarehouseId: params.WarehouseId,
 	}
 	model.UpdateMeta()
 

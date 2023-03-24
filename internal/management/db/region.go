@@ -17,17 +17,21 @@ type RegionImpl struct {
 }
 
 type CreateRegionParams struct {
-	Name string
+	Name   string
+	SiteId string
 }
 
 func (r *RegionImpl) CreateRegion(ctx context.Context, params *CreateRegionParams) (*models.Region, error) {
 	model := &models.Region{
-		Meta: models.Meta{},
-		Name: params.Name,
+		Meta:   models.Meta{},
+		Name:   params.Name,
+		SiteId: params.SiteId,
 	}
+
 	model.UpdateMeta()
 
 	id, err := r.svc.create(ctx, tableNameRegion, model)
+	fmt.Println(id)
 	if err != nil {
 		return nil, err
 	}

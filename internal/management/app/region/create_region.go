@@ -20,7 +20,8 @@ func (s ServiceImpl) CreateRegion(ctx context.Context, req *api.CreateRegionRequ
 	}
 
 	region, err := s.ctrlRegion.CreateRegion(ctx, &controllersRegion.CreateParams{
-		Name: req.Name,
+		Name:   req.Name,
+		SiteId: req.SiteId,
 	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorAlreadyExists) {

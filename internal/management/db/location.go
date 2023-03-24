@@ -18,13 +18,17 @@ type LocationImpl struct {
 }
 
 type CreateLocationParams struct {
-	Name string
+	Name     string
+	SiteId   string
+	RegionId string
 }
 
 func (l *LocationImpl) CreateLocation(ctx context.Context, params *CreateLocationParams) (*models.Location, error) {
 	model := &models.Location{
-		Meta: models.Meta{},
-		Name: params.Name,
+		Meta:     models.Meta{},
+		Name:     params.Name,
+		SiteId:   params.SiteId,
+		RegionId: params.RegionId,
 	}
 	model.UpdateMeta()
 

@@ -20,7 +20,10 @@ func (s *ServiceImpl) CreateWarehouse(ctx context.Context, req *api.CreateWareho
 	}
 
 	warehouse, err := s.ctrlWarehouse.CreateWarehouse(ctx, &controllersWarehouse.CreateParams{
-		Name: req.Name,
+		Name:       req.Name,
+		SiteId:     req.SiteId,
+		RegionId:   req.RegionId,
+		LocationId: req.LocationId,
 	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorAlreadyExists) {

@@ -21,6 +21,8 @@ message Location {
 
 message CreateLocationRequest {
   string name = 1;
+  string site_id = 2;
+  string region_id = 3;
 }
 
 message CreateLocationResponse {

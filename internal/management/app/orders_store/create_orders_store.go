@@ -19,7 +19,11 @@ func (s *ServiceImpl) CreateOrdersStore(ctx context.Context, req *api.CreateOrde
 	}
 
 	ordersStore, err := s.ctrlOrdersStore.CreateOrderStore(ctx, &controllersOrdersStore.CreateParams{
-		Name: req.Name,
+		Name:        req.Name,
+		SiteId:      req.SiteId,
+		RegionId:    req.RegionId,
+		LocationId:  req.LocationId,
+		WarehouseId: req.WarehouseId,
 	})
 	if err != nil {
 		if errors.Is(err, controllers.ErrorAlreadyExists) {
