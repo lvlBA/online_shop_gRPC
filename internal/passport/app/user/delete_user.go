@@ -20,7 +20,7 @@ func (s ServiceImpl) DeleteUser(ctx context.Context, req *api.DeleteUserRequest)
 
 	if err := s.ctrlUser.DeleteUser(ctx, req.Id); err != nil {
 		if errors.Is(err, controllers.ErrorNotFound) {
-			return nil, status.Error(codes.NotFound, "Not found")
+			return nil, status.Error(codes.NotFound, "Not found user")
 		}
 		s.log.Error(ctx, "failed to delete user", err, "request", req)
 

@@ -12,8 +12,8 @@ import (
 
 const tableNameRegion = "region"
 
-type RegionImpl struct {
-	svc service
+type regionImpl struct {
+	svc sqlService
 }
 
 type CreateRegionParams struct {
@@ -21,7 +21,7 @@ type CreateRegionParams struct {
 	SiteId string
 }
 
-func (r *RegionImpl) CreateRegion(ctx context.Context, params *CreateRegionParams) (*models.Region, error) {
+func (r *regionImpl) CreateRegion(ctx context.Context, params *CreateRegionParams) (*models.Region, error) {
 	model := &models.Region{
 		Meta:   models.Meta{},
 		Name:   params.Name,
@@ -40,7 +40,7 @@ func (r *RegionImpl) CreateRegion(ctx context.Context, params *CreateRegionParam
 	return model, nil
 }
 
-func (r *RegionImpl) GetRegion(ctx context.Context, id string) (*models.Region, error) {
+func (r *regionImpl) GetRegion(ctx context.Context, id string) (*models.Region, error) {
 	result := &models.Region{}
 
 	query, _, err := goqu.From(tableNameRegion).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
@@ -58,7 +58,7 @@ func (r *RegionImpl) GetRegion(ctx context.Context, id string) (*models.Region, 
 	return result, nil
 }
 
-func (r *RegionImpl) DeleteRegion(ctx context.Context, id string) error {
+func (r *regionImpl) DeleteRegion(ctx context.Context, id string) error {
 	return r.svc.delete(ctx, tableNameRegion, id)
 }
 
@@ -74,7 +74,7 @@ func (f *ListRegionFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset {
 	return ds
 }
 
-func (r *RegionImpl) ListRegion(ctx context.Context, filter *ListRegionFilter) ([]*models.Region, error) {
+func (r *regionImpl) ListRegion(ctx context.Context, filter *ListRegionFilter) ([]*models.Region, error) {
 	ds := goqu.From(tableNameRegion).Select("*")
 	ds = filter.Filter(ds)
 	query, _, err := ds.ToSQL()

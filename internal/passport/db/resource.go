@@ -19,7 +19,7 @@ type CreateResourceParams struct {
 }
 
 type ResourceImpl struct {
-	svc service
+	svc sqlService
 }
 
 type ListServiceFilter struct {

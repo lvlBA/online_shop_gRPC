@@ -126,15 +126,7 @@ func Test_OrdersStore(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to get token: %s", err)
 	}
-	defer func() {
-		// FIXME: удалятьвсе все должно само при удалении пользователя
-		if _, err := pCli.DeleteUserToken(ctx, &passportapi.DeleteUserTokenRequest{
-			Login:    user.User.Login,
-			Password: "AAAa1@#a98fuaf",
-		}); err != nil {
-			t.Fatalf("faield to delete token: %s", err)
-		}
-	}()
+
 	ctx = context.WithValue(ctx, grpcinterceptors.TokenKey, token.Token)
 
 	resourceCreateOrdersStore, err := pCli.CreateResource(ctx, &passportapi.CreateResourceRequest{

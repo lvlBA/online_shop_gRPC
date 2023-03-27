@@ -12,15 +12,15 @@ import (
 
 const tableNameSite = "sites"
 
-type SiteImpl struct {
-	svc service
+type siteImpl struct {
+	svc sqlService
 }
 
 type CreateSiteParams struct {
 	Name string
 }
 
-func (s *SiteImpl) CreateSite(ctx context.Context, params *CreateSiteParams) (*models.Site, error) {
+func (s *siteImpl) CreateSite(ctx context.Context, params *CreateSiteParams) (*models.Site, error) {
 	model := &models.Site{
 		Meta: models.Meta{},
 		Name: params.Name,
@@ -36,7 +36,7 @@ func (s *SiteImpl) CreateSite(ctx context.Context, params *CreateSiteParams) (*m
 	return model, nil
 }
 
-func (s *SiteImpl) GetSite(ctx context.Context, id string) (*models.Site, error) {
+func (s *siteImpl) GetSite(ctx context.Context, id string) (*models.Site, error) {
 	result := &models.Site{}
 
 	query, _, err := goqu.From(tableNameSite).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
@@ -54,7 +54,7 @@ func (s *SiteImpl) GetSite(ctx context.Context, id string) (*models.Site, error)
 	return result, nil
 }
 
-func (s *SiteImpl) DeleteSite(ctx context.Context, id string) error {
+func (s *siteImpl) DeleteSite(ctx context.Context, id string) error {
 	return s.svc.delete(ctx, tableNameSite, id)
 }
 
@@ -70,7 +70,7 @@ func (f *ListSitesFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset {
 	return ds
 }
 
-func (s *SiteImpl) ListSites(ctx context.Context, filter *ListSitesFilter) ([]*models.Site, error) {
+func (s *siteImpl) ListSites(ctx context.Context, filter *ListSitesFilter) ([]*models.Site, error) {
 	ds := goqu.From(tableNameSite).Select("*")
 	ds = filter.Filter(ds)
 	query, _, err := ds.ToSQL()

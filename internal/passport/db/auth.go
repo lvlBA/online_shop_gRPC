@@ -17,7 +17,7 @@ const (
 )
 
 type AuthImpl struct {
-	svc service
+	svc sqlService
 }
 
 type CreateUserTokenParams struct {
@@ -85,7 +85,6 @@ func (a *AuthImpl) GetUserAuth(ctx context.Context, params *GetUserAuthParams) (
 }
 
 func (a *AuthImpl) DeleteUserAuth(ctx context.Context, userId string) error {
-	//TODO how to do that throughout transaction
 	query, _, err := goqu.From(tableNameAuth).Delete().Where(goqu.Ex{"user_id": userId}).ToSQL()
 	if err != nil {
 		return err

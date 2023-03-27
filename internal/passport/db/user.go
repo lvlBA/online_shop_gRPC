@@ -9,13 +9,13 @@ import (
 	"github.com/doug-martin/goqu/v9"
 
 	"github.com/lvlBA/online_shop/internal/passport/models"
-	utilspagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
+	utilsPagination "github.com/lvlBA/online_shop/pkg/utils/pagination"
 )
 
 const tableNameUser = "users"
 
 type UserImpl struct {
-	svc service
+	svc sqlService
 }
 
 type CreateUserParams struct {
@@ -101,7 +101,7 @@ type ListUserFilter struct {
 
 func (f *ListUserFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset {
 	if f.Pagination != nil {
-		utilspagination.NewPagination(f.Pagination.Page, f.Pagination.Limit).DataSet(ds)
+		utilsPagination.NewPagination(f.Pagination.Page, f.Pagination.Limit).DataSet(ds)
 	}
 
 	return ds

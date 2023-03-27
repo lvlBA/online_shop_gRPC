@@ -7,8 +7,42 @@ import (
 	"strings"
 )
 
-// create - реализует создание объекта по запросу и возвращает его ID
-func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string, error) {
+// serviceImpl - реализует расширение сервиса
+type serviceImpl struct {
+	sqlClient
+}
+
+func (s *serviceImpl) Site() Site {
+	return &siteImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) Location() Location {
+	return &locationImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) Region() Region {
+	return &regionImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) Warehouse() Warehouse {
+	return &warehouseImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) OrdersStore() OrdersStore {
+	return &ordersStoreImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) create(ctx context.Context, table string, req any) (string, error) {
 	query, _, err := goqu.From(table).
 		Insert().
 		Rows(req).
@@ -20,7 +54,7 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 
 	var id string
 
-	if err = s.DB.QueryRowContext(ctx, query).Scan(&id); err != nil {
+	if err = s.sqlClient.QueryRowContext(ctx, query).Scan(&id); err != nil {
 		if strings.Contains(err.Error(), "23505") {
 			return "", ErrorAlreadyExists
 		}
@@ -30,11 +64,11 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	return id, nil
 }
 
-func (s *ServiceImpl) update(ctx context.Context, table, id string, req any) error {
+func (s *serviceImpl) update(ctx context.Context, table, id string, req any) error {
 	panic("unimplemented")
 }
 
-func (s *ServiceImpl) delete(ctx context.Context, table, id string) error {
+func (s *serviceImpl) delete(ctx context.Context, table, id string) error {
 	query, _, err := goqu.From(table).Delete().Where(goqu.Ex{"id": id}).ToSQL()
 	if err != nil {
 		return err

@@ -12,8 +12,8 @@ import (
 
 const tableNameWarehouse = "warehouse"
 
-type WarehouseImpl struct {
-	svc service
+type warehouseImpl struct {
+	svc sqlService
 }
 
 type CreateWarehouseParams struct {
@@ -23,7 +23,7 @@ type CreateWarehouseParams struct {
 	LocationId string
 }
 
-func (w *WarehouseImpl) CreateWarehouse(ctx context.Context, params *CreateWarehouseParams) (*models.Warehouse, error) {
+func (w *warehouseImpl) CreateWarehouse(ctx context.Context, params *CreateWarehouseParams) (*models.Warehouse, error) {
 	model := &models.Warehouse{
 		Meta:       models.Meta{},
 		Name:       params.Name,
@@ -42,7 +42,7 @@ func (w *WarehouseImpl) CreateWarehouse(ctx context.Context, params *CreateWareh
 	return model, nil
 }
 
-func (w *WarehouseImpl) GetWarehouse(ctx context.Context, id string) (*models.Warehouse, error) {
+func (w *warehouseImpl) GetWarehouse(ctx context.Context, id string) (*models.Warehouse, error) {
 	result := &models.Warehouse{}
 
 	query, _, err := goqu.From(tableNameWarehouse).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
@@ -60,7 +60,7 @@ func (w *WarehouseImpl) GetWarehouse(ctx context.Context, id string) (*models.Wa
 	return result, nil
 }
 
-func (w *WarehouseImpl) DeleteWarehouse(ctx context.Context, id string) error {
+func (w *warehouseImpl) DeleteWarehouse(ctx context.Context, id string) error {
 	return w.svc.delete(ctx, tableNameWarehouse, id)
 }
 
@@ -75,7 +75,7 @@ func (f *ListWareHouseFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset
 	return ds
 }
 
-func (w *WarehouseImpl) ListWarehouses(ctx context.Context, filter *ListWareHouseFilter) ([]*models.Warehouse, error) {
+func (w *warehouseImpl) ListWarehouses(ctx context.Context, filter *ListWareHouseFilter) ([]*models.Warehouse, error) {
 	ds := goqu.From(tableNameWarehouse).Select("*")
 	ds = filter.Filter(ds)
 	query, _, err := ds.ToSQL()

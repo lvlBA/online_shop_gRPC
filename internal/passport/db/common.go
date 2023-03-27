@@ -8,7 +8,30 @@ import (
 	"github.com/doug-martin/goqu/v9"
 )
 
-func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string, error) {
+// serviceImpl - реализует расширение сервиса
+type serviceImpl struct {
+	sqlClient
+}
+
+func (s *serviceImpl) User() User {
+	return &UserImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) Resource() Resource {
+	return &ResourceImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) Auth() Auth {
+	return &AuthImpl{
+		svc: s,
+	}
+}
+
+func (s *serviceImpl) create(ctx context.Context, table string, req any) (string, error) {
 	query, _, err := goqu.From(table).
 		Insert().
 		Rows(req).
@@ -19,7 +42,7 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	}
 	var id string
 
-	if err = s.DB.QueryRowContext(ctx, query).Scan(&id); err != nil {
+	if err = s.sqlClient.QueryRowContext(ctx, query).Scan(&id); err != nil {
 		if strings.Contains(err.Error(), "23505") {
 			return "", ErrorAlreadyExists
 		}
@@ -29,7 +52,7 @@ func (s *ServiceImpl) create(ctx context.Context, table string, req any) (string
 	return id, nil
 }
 
-func (s *ServiceImpl) update(ctx context.Context, table string, id string, req interface{}) error {
+func (s *serviceImpl) update(ctx context.Context, table string, id string, req interface{}) error {
 	query, _, err := goqu.From(table).
 		Update().
 		Set(req).
@@ -38,7 +61,6 @@ func (s *ServiceImpl) update(ctx context.Context, table string, id string, req i
 	if err != nil {
 		return err
 	}
-	fmt.Println(query)
 	_, err = s.ExecContext(ctx, query)
 	if err != nil {
 		return err
@@ -48,7 +70,7 @@ func (s *ServiceImpl) update(ctx context.Context, table string, id string, req i
 
 }
 
-func (s *ServiceImpl) delete(ctx context.Context, table, id string) error {
+func (s *serviceImpl) delete(ctx context.Context, table, id string) error {
 	query, _, err := goqu.From(table).Delete().Where(goqu.Ex{"id": id}).ToSQL()
 	if err != nil {
 		return err

@@ -127,7 +127,7 @@ func Test_Location(t *testing.T) {
 		t.Fatalf("failed to get token: %s", err)
 	}
 	defer func() {
-		// FIXME: удалятьвсе все должно само при удалении пользователя
+		// FIXME: удалять все все должно само при удалении пользователя
 		if _, err := pCli.DeleteUserToken(ctx, &passportapi.DeleteUserTokenRequest{
 			Login:    user.User.Login,
 			Password: "AAAa1@#a98fuaf",

@@ -12,8 +12,8 @@ import (
 
 const tableNameOrderStore = "orders_store"
 
-type OrdersStoreImpl struct {
-	svc service
+type ordersStoreImpl struct {
+	svc sqlService
 }
 
 type CreateOrdersStoreParams struct {
@@ -24,7 +24,7 @@ type CreateOrdersStoreParams struct {
 	WarehouseId string
 }
 
-func (o *OrdersStoreImpl) CreateOrderStore(ctx context.Context, params *CreateOrdersStoreParams) (*models.OrdersStore, error) {
+func (o *ordersStoreImpl) CreateOrderStore(ctx context.Context, params *CreateOrdersStoreParams) (*models.OrdersStore, error) {
 	model := &models.OrdersStore{
 		Meta:        models.Meta{},
 		Name:        params.Name,
@@ -44,7 +44,7 @@ func (o *OrdersStoreImpl) CreateOrderStore(ctx context.Context, params *CreateOr
 	return model, nil
 }
 
-func (o *OrdersStoreImpl) GetOrderStore(ctx context.Context, id string) (*models.OrdersStore, error) {
+func (o *ordersStoreImpl) GetOrderStore(ctx context.Context, id string) (*models.OrdersStore, error) {
 	result := &models.OrdersStore{}
 
 	query, _, err := goqu.From(tableNameOrderStore).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
@@ -61,7 +61,7 @@ func (o *OrdersStoreImpl) GetOrderStore(ctx context.Context, id string) (*models
 	return result, nil
 }
 
-func (o *OrdersStoreImpl) DeleteOrderStore(ctx context.Context, id string) error {
+func (o *ordersStoreImpl) DeleteOrderStore(ctx context.Context, id string) error {
 	return o.svc.delete(ctx, tableNameOrderStore, id)
 }
 
@@ -76,7 +76,7 @@ func (f *ListOrdersStoreFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDatas
 	return ds
 }
 
-func (o *OrdersStoreImpl) ListOrderStores(ctx context.Context, filter *ListOrdersStoreFilter) ([]*models.OrdersStore, error) {
+func (o *ordersStoreImpl) ListOrderStores(ctx context.Context, filter *ListOrdersStoreFilter) ([]*models.OrdersStore, error) {
 	ds := goqu.From(tableNameOrderStore).Select("*")
 	ds = filter.Filter(ds)
 	query, _, err := ds.ToSQL()

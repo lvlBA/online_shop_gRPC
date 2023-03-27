@@ -16,12 +16,12 @@ type CreateParams struct {
 }
 
 func (s *ServiceImpl) CreateWarehouse(ctx context.Context, params *CreateParams) (*models.Warehouse, error) {
-
 	resp, err := s.db.Warehouse().CreateWarehouse(ctx, &db.CreateWarehouseParams{
 		Name:       params.Name,
 		SiteId:     params.SiteId,
 		RegionId:   params.RegionId,
 		LocationId: params.LocationId,
 	})
+
 	return resp, controllers.AdaptingErrorDB(err)
 }

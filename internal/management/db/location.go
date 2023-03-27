@@ -13,8 +13,8 @@ import (
 
 const tableNameLocation = "location"
 
-type LocationImpl struct {
-	svc service
+type locationImpl struct {
+	svc sqlService
 }
 
 type CreateLocationParams struct {
@@ -23,7 +23,7 @@ type CreateLocationParams struct {
 	RegionId string
 }
 
-func (l *LocationImpl) CreateLocation(ctx context.Context, params *CreateLocationParams) (*models.Location, error) {
+func (l *locationImpl) CreateLocation(ctx context.Context, params *CreateLocationParams) (*models.Location, error) {
 	model := &models.Location{
 		Meta:     models.Meta{},
 		Name:     params.Name,
@@ -41,7 +41,7 @@ func (l *LocationImpl) CreateLocation(ctx context.Context, params *CreateLocatio
 	return model, nil
 }
 
-func (l *LocationImpl) GetLocation(ctx context.Context, id string) (*models.Location, error) {
+func (l *locationImpl) GetLocation(ctx context.Context, id string) (*models.Location, error) {
 	result := &models.Location{}
 
 	query, _, err := goqu.From(tableNameLocation).Select("*").Where(goqu.Ex{"id": id}).ToSQL()
@@ -59,7 +59,7 @@ func (l *LocationImpl) GetLocation(ctx context.Context, id string) (*models.Loca
 	return result, nil
 }
 
-func (l *LocationImpl) DeleteLocation(ctx context.Context, id string) error {
+func (l *locationImpl) DeleteLocation(ctx context.Context, id string) error {
 	return l.svc.delete(ctx, tableNameLocation, id)
 }
 
@@ -74,7 +74,7 @@ func (f *ListLocationFilter) Filter(ds *goqu.SelectDataset) *goqu.SelectDataset 
 	return ds
 }
 
-func (l *LocationImpl) ListLocation(ctx context.Context, filter *ListLocationFilter) ([]*models.Location, error) {
+func (l *locationImpl) ListLocation(ctx context.Context, filter *ListLocationFilter) ([]*models.Location, error) {
 	ds := goqu.From(tableNameLocation).Select("*")
 	ds = filter.Filter(ds)
 	query, _, err := ds.ToSQL()

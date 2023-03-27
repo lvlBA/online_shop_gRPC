@@ -1,45 +1,36 @@
 package db
 
 import (
+	"context"
+
 	"github.com/jmoiron/sqlx"
 )
 
+// ServiceImpl - Основной сервис
 type ServiceImpl struct {
-	*sqlx.DB
+	*serviceImpl          // расширяем возможности текущего объекта через наследование
+	db           *sqlx.DB // тут нужно именно установить свойство, что бы методы sqlx.DB и serviceImpl не пересекались
 }
 
 func New(db *sqlx.DB) *ServiceImpl {
 	return &ServiceImpl{
-		DB: db,
+		db: db,
+		serviceImpl: &serviceImpl{
+			sqlClient: db,
+		},
 	}
 }
 
-func (s *ServiceImpl) Site() Site {
-	return &SiteImpl{
-		svc: s,
+func (s *ServiceImpl) Begin(ctx context.Context) (Transaction, error) {
+	tx, err := s.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func (s *ServiceImpl) Location() Location {
-	return &LocationImpl{
-		svc: s,
-	}
-}
-
-func (s *ServiceImpl) Region() Region {
-	return &RegionImpl{
-		svc: s,
-	}
-}
-
-func (s *ServiceImpl) Warehouse() Warehouse {
-	return &WarehouseImpl{
-		svc: s,
-	}
-}
-
-func (s *ServiceImpl) OrdersStore() OrdersStore {
-	return &OrdersStoreImpl{
-		svc: s,
-	}
+	return &txImpl{
+		Tx: tx,
+		serviceImpl: &serviceImpl{
+			sqlClient: tx,
+		},
+	}, nil
 }
