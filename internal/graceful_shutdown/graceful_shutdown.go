@@ -33,7 +33,7 @@ type Config struct {
 }
 
 func New(cfg *Config) *GracefulShutDown {
-	ch := make(chan os.Signal)
+	ch := make(chan os.Signal, 1)
 	ctx, cancel := context.WithCancel(cfg.Ctx)
 	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT)
 
