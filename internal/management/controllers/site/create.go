@@ -2,8 +2,8 @@ package site
 
 import (
 	"context"
-	"github.com/lvlBA/online_shop/internal/management/controllers"
 
+	"github.com/lvlBA/online_shop/internal/management/controllers"
 	"github.com/lvlBA/online_shop/internal/management/db"
 	"github.com/lvlBA/online_shop/internal/management/models"
 )

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cfg := &app.Config{}
+	cfg := new(app.Config)
 	if err := env.Parse(cfg); err != nil {
 		fmt.Printf("failed to parse config: %s", err)
 		os.Exit(1)

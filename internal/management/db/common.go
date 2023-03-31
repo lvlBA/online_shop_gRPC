@@ -3,8 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/doug-martin/goqu/v9"
 	"strings"
+
+	"github.com/doug-martin/goqu/v9"
 )
 
 // serviceImpl - реализует расширение сервиса
