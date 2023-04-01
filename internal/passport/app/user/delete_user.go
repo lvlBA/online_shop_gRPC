@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/lvlBA/online_shop/internal/management/controllers"
+	"github.com/lvlBA/online_shop/internal/storage/controllers"
 	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 

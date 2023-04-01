@@ -17,6 +17,11 @@ PASSPORT_API_PATH 		= api/passport/v1
 PASSPORT_PROTO_API_DIR 	= api/passport/v1
 PASSPORT_PROTO_OUT_DIR 	= pkg/passport/v1
 
+# Storage service properties
+PROJECT_NAME_STORAGE		= storage
+STORAGE_API_PATH 		= api/storage/v1
+STORAGE_PROTO_API_DIR 	= api/storage/v1
+STORAGE_PROTO_OUT_DIR 	= pkg/storage/v1
 # Commands
 
 .PHONY: gen-proto
@@ -46,6 +51,16 @@ gen-proto-passport:
 		--go_out=$(PASSPORT_PROTO_OUT_DIR) --go_opt=paths=source_relative \
         --go-grpc_out=$(PASSPORT_PROTO_OUT_DIR)  --go-grpc_opt=paths=source_relative \
 		./${PASSPORT_PROTO_API_DIR}/*.proto
+
+.PHONY: gen-proto-storage
+gen-proto-storage:
+	mkdir -p ${STORAGE_PROTO_OUT_DIR}
+	protoc \
+		-I ${STORAGE_API_PATH} \
+		-I ${GOPATH}/src \
+		--go_out=$(STORAGE_PROTO_OUT_DIR) --go_opt=paths=source_relative \
+        --go-grpc_out=$(STORAGE_PROTO_OUT_DIR)  --go-grpc_opt=paths=source_relative \
+		./${STORAGE_PROTO_API_DIR}/*.proto
 
 .PHONY: build
 build: build_mgmt build_passport

@@ -9,7 +9,7 @@ CREATE TABLE goods
     length int NOT NULL,
     width int NOT NULL,
     height  int NOT NULL,
-    price double precision NOT NULL,
+    price float NOT NULL,
     created_at timestamp DEFAULT now(),
     changed_at timestamp DEFAULT current_timestamp
 );

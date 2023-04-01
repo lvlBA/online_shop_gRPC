@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package online_shop.storage.v1;
+
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
+
+option go_package = "github.com/lvlBA/online_shop/storage;storage";
+
+
+service GoodsService {
+  rpc CreateGoods (CreateGoodsRequest) returns (CreateGoodsResponse){}
+  rpc GetGoods (GetGoodsRequest) returns (GetGoodsResponse){}
+  rpc DeleteGoods (DeleteGoodsRequest) returns (DeleteGoodsResponse){}
+  rpc ListGoods (ListGoodsRequest) returns (ListGoodsResponse){}
+}
+
+
+message Goods {
+ string id = 1;
+ string name = 2;
+ uint64 weight = 3;
+ uint64 length = 4;
+ uint64 width = 5;
+ uint64 height = 6;
+ float price = 7;
+}
+
+message CreateGoodsRequest {
+  string name = 1;
+  uint64 weight = 2;
+  uint64 length = 3;
+  uint64 width = 4;
+  uint64 height = 5;
+  float price = 6;
+}
+
+message CreateGoodsResponse {
+  Goods goods = 1;
+}
+
+message GetGoodsRequest {
+  string id = 1;
+  string name = 2;
+
+}
+
+message GetGoodsResponse {
+  Goods goods = 1;
+}
+
+message DeleteGoodsRequest {
+  string id = 1;
+}
+
+message DeleteGoodsResponse {
+}
+
+message ListGoodsRequest {
+  online_shop.api.Pagination pagination = 1;
+}
+
+message ListGoodsResponse {
+  repeated Goods goods = 1;
+}
