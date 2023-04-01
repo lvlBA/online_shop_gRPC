@@ -18,6 +18,7 @@ type sqlClient interface {
 // Сервисы которые мы возвращаем для работы в контроллере
 type services interface {
 	Goods() Goods
+	Cargo() Cargo
 }
 
 // Service - основной интерфейс сервиса
@@ -48,4 +49,13 @@ type Goods interface {
 	GetGoods(ctx context.Context, params *GetGoodsParams) (*models.Goods, error)
 	DeleteGoods(ctx context.Context, id string) error
 	ListGoods(ctx context.Context, filter *ListGoodsFilter) ([]*models.Goods, error)
+}
+
+// Cargo - реализация работы с бд для перевозчиков
+
+type Cargo interface {
+	CreateCarrier(ctx context.Context, params *CreateCargoParams) (*models.Carrier, error)
+	GetCarrier(ctx context.Context, params *GetCargoParams) (*models.Carrier, error)
+	DeleteCarrier(ctx context.Context, id string) error
+	ListCarrier(ctx context.Context, filter *ListCargoFilter) ([]*models.Carrier, error)
 }

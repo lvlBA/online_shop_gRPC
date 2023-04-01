@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package online_shop.storage.v1;
+
+import "github.com/lvlBA/online_shop/api/v1/pagination.proto";
+
+option go_package = "github.com/lvlBA/online_shop/storage;storage";
+
+
+service CargoService {
+  rpc CreateCarrier (CreateCarrierRequest) returns (CreateCarrierResponse){}
+  rpc GetCarrier (GetCarrierRequest) returns (GetCarrierResponse){}
+  rpc DeleteCarrier (DeleteCarrierRequest) returns (DeleteCarrierResponse){}
+  rpc ListCarriers (ListCarrierRequest) returns (ListCarrierResponse){}
+}
+
+
+message Carrier {
+  string id = 1;
+  string name = 2;
+  uint64 capacity = 3;
+  float price = 4;
+  bool availability = 5;
+}
+
+message CreateCarrierRequest {
+  string name = 1;
+  uint64 capacity = 2;
+  float price = 3;
+  bool availability = 4;
+}
+
+message CreateCarrierResponse {
+ Carrier carrier = 1;
+}
+
+message GetCarrierRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message GetCarrierResponse {
+  Carrier carrier = 1;
+}
+
+message DeleteCarrierRequest {
+  string id = 1;
+}
+
+message DeleteCarrierResponse {
+}
+
+message ListCarrierRequest {
+  online_shop.api.Pagination pagination = 1;
+}
+
+message ListCarrierResponse {
+  repeated Carrier carrier = 1;
+}

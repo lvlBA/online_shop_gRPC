@@ -19,6 +19,3 @@ func New(ctrlGoods controllerGoods.Service, l logger.Logger) api.GoodsServiceSer
 		log:                             l,
 	}
 }
-
-type UserServiceClient interface {
-}

@@ -19,6 +19,12 @@ func (s *serviceImpl) Goods() Goods {
 	}
 }
 
+func (s *serviceImpl) Cargo() Cargo {
+	return &cargoImpl{
+		svc: s,
+	}
+}
+
 func (s *serviceImpl) create(ctx context.Context, table string, req any) (string, error) {
 	query, _, err := goqu.From(table).
 		Insert().
