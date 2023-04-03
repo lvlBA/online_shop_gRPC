@@ -9,13 +9,13 @@ import (
 	"google.golang.org/grpc/keepalive"
 
 	gracefulshutdown "github.com/lvlBA/online_shop/internal/graceful_shutdown"
-	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	grpcInterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
 	appCargo "github.com/lvlBA/online_shop/internal/storage/app/cargo"
 	appGoods "github.com/lvlBA/online_shop/internal/storage/app/goods"
 	controllersCargo "github.com/lvlBA/online_shop/internal/storage/controllers/cargo"
 	controllersGoods "github.com/lvlBA/online_shop/internal/storage/controllers/goods"
-
 	"github.com/lvlBA/online_shop/internal/storage/db"
+	passportClient "github.com/lvlBA/online_shop/pkg/passport_client"
 	api "github.com/lvlBA/online_shop/pkg/storage/v1"
 )
 
@@ -34,7 +34,6 @@ func Run(cfg *Config) error {
 	}
 
 	// interceptors
-	getUserMetaInter := grpcinterceptors.NewGetUserMeta()
 	gs := gracefulshutdown.New(&gracefulshutdown.Config{
 		Ctx:  context.Background(),
 		Log:  log,
@@ -69,9 +68,20 @@ func Run(cfg *Config) error {
 	cargoCtrl := controllersCargo.New(dbSvc)
 	cargoApp := appCargo.New(cargoCtrl, log)
 
-	// GRPC register
-	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor, getUserMetaInter.GrpcInterceptor)
+	passportCli, err := passportClient.New(gs.GetContext(), &passportClient.Config{
+		Addr: cfg.GrpcPassportAddr,
+	})
+
+	if err != nil {
+		return fmt.Errorf("failed to create passport client: %w", err)
+	}
+
+	userAuthInter := grpcInterceptors.New(log, passportCli)
+	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor, userAuthInter.GrpcInterceptor)
+
 	gs.AddStop(grpcSvc.Stop)
+	// GRPC register
+
 	api.RegisterGoodsServiceServer(grpcSvc, goodsApp)
 	api.RegisterCargoServiceServer(grpcSvc, cargoApp)
 

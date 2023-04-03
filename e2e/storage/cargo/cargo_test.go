@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	passportapi "github.com/lvlBA/online_shop/pkg/passport/v1"
+	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
 	"testing"
 
 	"github.com/caarlos0/env/v7"
@@ -13,8 +15,6 @@ import (
 
 	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
 	v1 "github.com/lvlBA/online_shop/pkg/api/v1"
-	passportapi "github.com/lvlBA/online_shop/pkg/passport/v1"
-	passportclient "github.com/lvlBA/online_shop/pkg/passport_client"
 	storageapi "github.com/lvlBA/online_shop/pkg/storage/v1"
 	storageClient "github.com/lvlBA/online_shop/pkg/storage_client"
 )
