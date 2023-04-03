@@ -2,11 +2,13 @@ package grpcinterceptors
 
 import (
 	"context"
-	"github.com/lvlBA/online_shop/pkg/logger"
-	api "github.com/lvlBA/online_shop/pkg/passport/v1"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/lvlBA/online_shop/pkg/logger"
+	api "github.com/lvlBA/online_shop/pkg/passport/v1"
 )
 
 type CheckUserAccess struct {

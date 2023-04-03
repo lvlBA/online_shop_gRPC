@@ -10,8 +10,11 @@ import (
 
 	gracefulshutdown "github.com/lvlBA/online_shop/internal/graceful_shutdown"
 	grpcinterceptors "github.com/lvlBA/online_shop/internal/grpc_interceptors"
+	appCargo "github.com/lvlBA/online_shop/internal/storage/app/cargo"
 	appGoods "github.com/lvlBA/online_shop/internal/storage/app/goods"
+	controllersCargo "github.com/lvlBA/online_shop/internal/storage/controllers/cargo"
 	controllersGoods "github.com/lvlBA/online_shop/internal/storage/controllers/goods"
+
 	"github.com/lvlBA/online_shop/internal/storage/db"
 	api "github.com/lvlBA/online_shop/pkg/storage/v1"
 )
@@ -63,10 +66,14 @@ func Run(cfg *Config) error {
 	goodsCtrl := controllersGoods.New(dbSvc)
 	goodsApp := appGoods.New(goodsCtrl, log)
 
+	cargoCtrl := controllersCargo.New(dbSvc)
+	cargoApp := appCargo.New(cargoCtrl, log)
+
 	// GRPC register
 	grpcSvc := cfg.getGrpcServer(gs.GrpcInterceptor, getUserMetaInter.GrpcInterceptor)
 	gs.AddStop(grpcSvc.Stop)
 	api.RegisterGoodsServiceServer(grpcSvc, goodsApp)
+	api.RegisterCargoServiceServer(grpcSvc, cargoApp)
 
 	if err = grpcSvc.Serve(grpcListener); err != nil {
 		return fmt.Errorf("failed to start server: %w", err)

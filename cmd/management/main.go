@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/caarlos0/env/v7"
+
 	"github.com/lvlBA/online_shop/internal/management/app"
 )
 
